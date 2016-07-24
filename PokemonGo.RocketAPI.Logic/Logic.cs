@@ -413,7 +413,11 @@ namespace PokemonGo.RocketAPI.Logic
                                     _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
                                     i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
                             _clientSettings.MaxTravelDistanceInMeters == 0
-                    );
+                    ).OrderBy(
+                        i =>
+                            LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
+                                i.Longitude)
+                    ).Take(25);
 
 
             var pokestopList = pokeStops.ToList();
