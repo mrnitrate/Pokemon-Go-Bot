@@ -753,20 +753,6 @@ namespace PokemonGo.RocketAPI.Logic
             await Task.Delay(3000);
         }
 
-        private async Task DisplayHighests()
-        {
-            Logger.Write($"====== DisplayHighestsCP ======", LogLevel.Info, ConsoleColor.Yellow);
-            var highestsPokemonCP = await _inventory.GetHighestsCP(20);
-            foreach (var pokemon in highestsPokemonCP)
-                Logger.Write($"# CP {pokemon.Cp.ToString().PadLeft(4, ' ')}/{PokemonInfo.CalculateMaxCP(pokemon).ToString().PadLeft(4, ' ')} | ({PokemonInfo.CalculatePokemonPerfection(pokemon).ToString("0.00")}% perfect)\t| Lvl {PokemonInfo.GetLevel(pokemon).ToString("00")}\t NAME: '{pokemon.PokemonId}'", LogLevel.Info, ConsoleColor.Yellow);
-            Logger.Write($"====== DisplayHighestsPerfect ======", LogLevel.Info, ConsoleColor.Yellow);
-            var highestsPokemonPerfect = await _inventory.GetHighestsPerfect(10);
-            foreach (var pokemon in highestsPokemonPerfect)
-            {
-                Logger.Write($"# CP {pokemon.Cp.ToString().PadLeft(4, ' ')}/{PokemonInfo.CalculateMaxCP(pokemon).ToString().PadLeft(4, ' ')} | ({PokemonInfo.CalculatePokemonPerfection(pokemon).ToString("0.00")}% perfect)\t| Lvl {PokemonInfo.GetLevel(pokemon).ToString("00")}\t NAME: '{pokemon.PokemonId}'", LogLevel.Info, ConsoleColor.Yellow);
-            }
-        }
-
         public void StartLiveView()
         {
             _liveView = new liveView();
@@ -861,23 +847,11 @@ namespace PokemonGo.RocketAPI.Logic
                 _liveView.UpdateMapPokemons(pokemons);
         }
 
-        private async Task LoadAndDisplayGPXFile()
+        public async Task UseLuckyEgg(Client client)
         {
-            string xmlString = System.IO.File.ReadAllText(_clientSettings.GPXFile);
-            GPXReader Readgpx = new GPXReader(xmlString);
-            foreach (GPXReader.trk trk in Readgpx.Tracks)
-            {
-                foreach (GPXReader.trkseg trkseg in trk.Segments)
-                {
-                    foreach (GPXReader.trkpt trpkt in trkseg.TrackPoints)
-                    {
-                        Console.WriteLine(trpkt.ToString());
-                    }
-                }
-            }
-            await Task.Delay(0);
-        }
-
+            var inventory = await _inventory.GetItems();
+            var luckyEggs = inventory.Where(p => (ItemId)p.Item_ == ItemId.ItemLuckyEgg);
+            var luckyEgg = luckyEggs.FirstOrDefault();
 
             if (luckyEgg == null || luckyEgg.Count <= 0)
                 return;
