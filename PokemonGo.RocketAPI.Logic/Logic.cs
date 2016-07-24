@@ -242,6 +242,7 @@ namespace PokemonGo.RocketAPI.Logic
                                 i.Longitude));
 
             UpdateLiveViewMapPokemons(pokemons);
+            _liveView.UpdateLatLng(_client.CurrentLat, _client.CurrentLng);
 
             foreach (var pokemon in pokemons)
             {
@@ -323,6 +324,7 @@ namespace PokemonGo.RocketAPI.Logic
                                     );
 
                             var pokestopList = pokeStops.ToList();
+                            UpdateLiveViewMapPokestops(pokeStops);
 
                             while (pokestopList.Any())
                             {
@@ -347,6 +349,8 @@ namespace PokemonGo.RocketAPI.Logic
                                         $"XP: {fortSearch.ExperienceAwarded}, Gems: {fortSearch.GemsAwarded}, Items: {StringUtils.GetSummedFriendlyNameOfItemAwardList(fortSearch.ItemsAwarded)}",
                                         LogLevel.Pokestop);
                                 }
+                                UpdateLiveView();
+                                UpdateLiveViewMapPokestops(pokestopList);
 
                                 await Task.Delay(1000);
                                 await RecycleItems();
@@ -453,6 +457,8 @@ namespace PokemonGo.RocketAPI.Logic
                         LogLevel.Pokestop);
                 }
                 UpdateLiveView();
+                UpdateLiveViewMapPokestops(pokestopList);
+
                 await Task.Delay(1000);
                 if (++stopsHit%5 == 0) //TODO: OR item/pokemon bag is full
                 {
