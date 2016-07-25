@@ -244,7 +244,7 @@ namespace PokemonGo.RocketAPI.Logic
 
             foreach (var line in currentList)
             {
-                if (mypokemons.Where(p => p.Id.ToString() == (string)line.Cells[3].Value).ToList().Count == 0)
+                if (mypokemons.Where(p => p.Id.ToString() == (string)line.Cells[4].Value).ToList().Count == 0)
                 {
                     dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Remove(line)));
                 }
@@ -253,7 +253,7 @@ namespace PokemonGo.RocketAPI.Logic
             foreach (var pokemon in mypokemons)
             {
                 
-                if (currentList.Where(p => (string)p.Cells[3].Value == pokemon.Id.ToString()).Count() == 0)
+                if (currentList.Where(p => (string)p.Cells[4].Value == pokemon.Id.ToString()).Count() == 0)
                 {
                     if (_imagesList.Images.ContainsKey("pokemon_" + ((int)pokemon.PokemonId).ToString()))
                         dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(_imagesList.Images[_imagesList.Images.IndexOfKey("pokemon_" + ((int)pokemon.PokemonId).ToString())], pokemon.PokemonId.ToString(), pokemon.Cp, PokemonInfo.CalculateMaxCP(pokemon), pokemon.Id.ToString(),Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
@@ -362,6 +362,7 @@ namespace PokemonGo.RocketAPI.Logic
 
         public Dictionary<string, ulong> GetPokemonToEvolve()
         {
+            dataMyPokemons.EndEdit();
             Dictionary<string, ulong> pokemonsToEvolve = new Dictionary<string, ulong>();
             foreach(DataGridViewRow row in dataMyPokemons.Rows)
             {
@@ -374,11 +375,12 @@ namespace PokemonGo.RocketAPI.Logic
 
         public Dictionary<string, ulong> GetPokemonToTransfer()
         {
+            dataMyPokemons.EndEdit();
             Dictionary<string, ulong> pokemonsToTransfer = new Dictionary<string, ulong>();
             foreach (DataGridViewRow row in dataMyPokemons.Rows)
             {
                 if ((bool)row.Cells[8].Value == true && (bool)row.Cells[7].Value == false)
-                    pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
+                    pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[4].Value));
             }
 
             return pokemonsToTransfer;
