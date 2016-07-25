@@ -377,7 +377,7 @@ namespace PokemonGo.RocketAPI.Logic
             Dictionary<string, ulong> pokemonsToTransfer = new Dictionary<string, ulong>();
             foreach (DataGridViewRow row in dataMyPokemons.Rows)
             {
-                if ((bool)row.Cells[8].Value == true && (bool)row.Cells[6].Value == false)
+                if ((bool)row.Cells[8].Value == true && (bool)row.Cells[7].Value == false)
                     pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
             }
 
