@@ -12,7 +12,6 @@ using PokemonGo.RocketAPI.Extensions;
 using PokemonGo.RocketAPI.GeneratedCode;
 using PokemonGo.RocketAPI.Helpers;
 using PokemonGo.RocketAPI.Logic.Utils;
-using System.Device.Location;
 using System.Windows.Forms;
 
 #endregion
@@ -762,6 +761,8 @@ namespace PokemonGo.RocketAPI.Logic
             Logger.Write($"Used, remaining: {berry.Count}", LogLevel.Berry);
             await Task.Delay(3000);
         }
+
+ 
 
         public void StartLiveView()
         {
