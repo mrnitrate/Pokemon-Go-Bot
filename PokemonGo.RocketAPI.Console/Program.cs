@@ -4,6 +4,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using PokemonGo.RocketAPI.Exceptions;
+using PokemonGo.RocketAPI.Logic;
+using System.Windows.Forms;
 
 #endregion
 
@@ -11,6 +13,10 @@ namespace PokemonGo.RocketAPI.Console
 {
     internal class Program
     {
+        private static liveView _liveView;
+        private static bool _useLiveview = true;
+
+        [STAThread]
         private static void Main()
         {
             Logger.SetLogger(new ConsoleLogger(LogLevel.Info));
@@ -19,7 +25,7 @@ namespace PokemonGo.RocketAPI.Console
             {
                 try
                 {
-                    new Logic.Logic(new Settings()).Execute().Wait();
+                    Start();
                 }
                 catch (PtcOfflineException)
                 {
@@ -27,7 +33,8 @@ namespace PokemonGo.RocketAPI.Console
                         LogLevel.Error);
                     Logger.Write("Trying again in 20 seconds...");
                     Thread.Sleep(20000);
-                    new Logic.Logic(new Settings()).Execute().Wait();
+
+                    Start();
                 }
                 catch (AccountNotVerifiedException)
                 {
@@ -37,10 +44,44 @@ namespace PokemonGo.RocketAPI.Console
                 catch (Exception ex)
                 {
                     Logger.Write($"Unhandled exception: {ex}", LogLevel.Error);
-                    new Logic.Logic(new Settings()).Execute().Wait();
+                    Start();
                 }
             });
             System.Console.ReadLine();
+        }
+
+        private static void Start()
+        {
+            if (_useLiveview)
+            {
+                if (_liveView == null)
+                {
+                    Thread t = new Thread(StartLiveView);
+                    t.SetApartmentState(ApartmentState.STA);
+                    t.Start();
+                    // Wait 2secs for form to open to get the reference
+                    t.Join(2000);
+                }
+                new Logic.Logic(new Settings(), _liveView).Execute().Wait();
+            }
+            else
+            {
+                new Logic.Logic(new Settings()).Execute().Wait();
+            }
+        }
+
+        private static void StartLiveView()
+        {
+            _liveView = new liveView();
+            _liveView.FormClosed += StopLiveView;
+
+            Application.EnableVisualStyles();
+            Application.Run(_liveView);
+        }
+
+        public static void StopLiveView(object sender, EventArgs e)
+        {
+            _liveView = null;
         }
     }
 }

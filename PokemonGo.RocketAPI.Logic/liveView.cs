@@ -270,7 +270,7 @@ namespace PokemonGo.RocketAPI.Logic
             progressLevel.Invoke(new Action(() => progressLevel.Minimum = 0));
             progressLevel.Invoke(new Action(() => progressLevel.Maximum = (int)mystats.NextLevelXp - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)));
             progressLevel.Invoke(new Action(() => progressLevel.Value = (int)mystats.Experience - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)));
-            labelExp.Invoke(new Action(() => labelExp.Text = ((int)mystats.Experience - (int)mystats.PrevLevelXp).ToString() + "/" + ((int)mystats.NextLevelXp - (int)mystats.PrevLevelXp).ToString()));
+            labelExp.Invoke(new Action(() => labelExp.Text = ((int)mystats.Experience - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)).ToString() + "/" + ((int)mystats.NextLevelXp - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)).ToString()));
 
             _currentExperience = mystats.Experience;
         }
@@ -296,7 +296,7 @@ namespace PokemonGo.RocketAPI.Logic
             Dictionary<string, ulong> pokemonsToEvolve = new Dictionary<string, ulong>();
             foreach(DataGridViewRow row in dataMyPokemons.Rows)
             {
-                if ((bool)row.Cells[6].Value == true)
+                if ((bool)row.Cells[7].Value == true)
                     pokemonsToEvolve.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
             }
 
@@ -308,7 +308,7 @@ namespace PokemonGo.RocketAPI.Logic
             Dictionary<string, ulong> pokemonsToTransfer = new Dictionary<string, ulong>();
             foreach (DataGridViewRow row in dataMyPokemons.Rows)
             {
-                if ((bool)row.Cells[7].Value == true && (bool)row.Cells[6].Value == false)
+                if ((bool)row.Cells[8].Value == true && (bool)row.Cells[6].Value == false)
                     pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
             }
 

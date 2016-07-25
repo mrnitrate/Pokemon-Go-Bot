@@ -34,8 +34,6 @@
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.labelPokemonSpace = new System.Windows.Forms.Label();
-            this.dataMyPokemons = new System.Windows.Forms.DataGridView();
             this.grpStats = new System.Windows.Forms.GroupBox();
             this.labelRuntime = new System.Windows.Forms.Label();
             this.textPokecoins = new System.Windows.Forms.TextBox();
@@ -48,18 +46,23 @@
             this.progressLevel = new System.Windows.Forms.ProgressBar();
             this.label3 = new System.Windows.Forms.Label();
             this.gMap = new GMap.NET.WindowsForms.GMapControl();
-            this.grpMyPokemons = new System.Windows.Forms.GroupBox();
             this.grpMap = new System.Windows.Forms.GroupBox();
             this.textCurrentLatLng = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tabItems = new System.Windows.Forms.TabControl();
-            this.tabPageItems = new System.Windows.Forms.TabPage();
-            this.tabPageCandies = new System.Windows.Forms.TabPage();
+            this.tabControlItems = new System.Windows.Forms.TabControl();
+            this.tabPageMyItems = new System.Windows.Forms.TabPage();
+            this.tabPageMyCandies = new System.Windows.Forms.TabPage();
             this.dataMyCandies = new System.Windows.Forms.DataGridView();
             this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column15 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabControlPokemons = new System.Windows.Forms.TabControl();
+            this.tabPageMyPokemons = new System.Windows.Forms.TabPage();
+            this.tabPagePokemonSettings = new System.Windows.Forms.TabPage();
+            this.dataMyPokemons = new System.Windows.Forms.DataGridView();
+            this.labelPokemonSpace = new System.Windows.Forms.Label();
+            this.labelPokemonHr = new System.Windows.Forms.Label();
             this.Column1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -70,15 +73,16 @@
             this.Column11 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataMyItems)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).BeginInit();
             this.grpStats.SuspendLayout();
-            this.grpMyPokemons.SuspendLayout();
             this.grpMap.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tabItems.SuspendLayout();
-            this.tabPageItems.SuspendLayout();
-            this.tabPageCandies.SuspendLayout();
+            this.tabControlItems.SuspendLayout();
+            this.tabPageMyItems.SuspendLayout();
+            this.tabPageMyCandies.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataMyCandies)).BeginInit();
+            this.tabControlPokemons.SuspendLayout();
+            this.tabPageMyPokemons.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).BeginInit();
             this.SuspendLayout();
             // 
             // labelBagSpace
@@ -144,45 +148,9 @@
             this.Column8.ReadOnly = true;
             this.Column8.Visible = false;
             // 
-            // labelPokemonSpace
-            // 
-            this.labelPokemonSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelPokemonSpace.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPokemonSpace.Location = new System.Drawing.Point(576, 201);
-            this.labelPokemonSpace.Name = "labelPokemonSpace";
-            this.labelPokemonSpace.Size = new System.Drawing.Size(285, 19);
-            this.labelPokemonSpace.TabIndex = 11;
-            this.labelPokemonSpace.Text = "label2";
-            this.labelPokemonSpace.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // dataMyPokemons
-            // 
-            this.dataMyPokemons.AllowUserToAddRows = false;
-            this.dataMyPokemons.AllowUserToDeleteRows = false;
-            this.dataMyPokemons.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataMyPokemons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataMyPokemons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column1,
-            this.Column2,
-            this.Column3,
-            this.Column16,
-            this.Column7,
-            this.Column9,
-            this.Column10,
-            this.Column11,
-            this.Column12});
-            this.dataMyPokemons.Location = new System.Drawing.Point(6, 19);
-            this.dataMyPokemons.Name = "dataMyPokemons";
-            this.dataMyPokemons.RowHeadersWidth = 10;
-            this.dataMyPokemons.RowTemplate.Height = 40;
-            this.dataMyPokemons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataMyPokemons.Size = new System.Drawing.Size(855, 179);
-            this.dataMyPokemons.TabIndex = 8;
-            // 
             // grpStats
             // 
+            this.grpStats.Controls.Add(this.labelPokemonHr);
             this.grpStats.Controls.Add(this.labelRuntime);
             this.grpStats.Controls.Add(this.textPokecoins);
             this.grpStats.Controls.Add(this.label4);
@@ -250,7 +218,7 @@
             this.labelExpHr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelExpHr.Location = new System.Drawing.Point(12, 131);
             this.labelExpHr.Name = "labelExpHr";
-            this.labelExpHr.Size = new System.Drawing.Size(282, 23);
+            this.labelExpHr.Size = new System.Drawing.Size(154, 23);
             this.labelExpHr.TabIndex = 12;
             this.labelExpHr.Text = "XP/HR";
             this.labelExpHr.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -318,21 +286,6 @@
             this.gMap.TabIndex = 10;
             this.gMap.Zoom = 0D;
             // 
-            // grpMyPokemons
-            // 
-            this.grpMyPokemons.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.SetColumnSpan(this.grpMyPokemons, 2);
-            this.grpMyPokemons.Controls.Add(this.labelPokemonSpace);
-            this.grpMyPokemons.Controls.Add(this.dataMyPokemons);
-            this.grpMyPokemons.Location = new System.Drawing.Point(3, 460);
-            this.grpMyPokemons.Name = "grpMyPokemons";
-            this.grpMyPokemons.Size = new System.Drawing.Size(867, 319);
-            this.grpMyPokemons.TabIndex = 11;
-            this.grpMyPokemons.TabStop = false;
-            this.grpMyPokemons.Text = "Pokémons";
-            // 
             // grpMap
             // 
             this.grpMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -373,9 +326,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.grpStats, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.grpMyPokemons, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.tabControlPokemons, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.grpMap, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.tabItems, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tabControlItems, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -383,41 +336,42 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 325F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(873, 682);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
-            // tabItems
+            // tabControlItems
             // 
-            this.tabItems.Controls.Add(this.tabPageItems);
-            this.tabItems.Controls.Add(this.tabPageCandies);
-            this.tabItems.Location = new System.Drawing.Point(3, 169);
-            this.tabItems.Name = "tabItems";
-            this.tabItems.SelectedIndex = 0;
-            this.tabItems.Size = new System.Drawing.Size(305, 285);
-            this.tabItems.TabIndex = 19;
+            this.tabControlItems.Controls.Add(this.tabPageMyItems);
+            this.tabControlItems.Controls.Add(this.tabPageMyCandies);
+            this.tabControlItems.Location = new System.Drawing.Point(3, 169);
+            this.tabControlItems.Name = "tabControlItems";
+            this.tabControlItems.SelectedIndex = 0;
+            this.tabControlItems.Size = new System.Drawing.Size(305, 285);
+            this.tabControlItems.TabIndex = 19;
             // 
-            // tabPageItems
+            // tabPageMyItems
             // 
-            this.tabPageItems.Controls.Add(this.labelBagSpace);
-            this.tabPageItems.Controls.Add(this.dataMyItems);
-            this.tabPageItems.Location = new System.Drawing.Point(4, 22);
-            this.tabPageItems.Name = "tabPageItems";
-            this.tabPageItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItems.Size = new System.Drawing.Size(297, 259);
-            this.tabPageItems.TabIndex = 0;
-            this.tabPageItems.Text = "Items";
-            this.tabPageItems.UseVisualStyleBackColor = true;
+            this.tabPageMyItems.Controls.Add(this.labelBagSpace);
+            this.tabPageMyItems.Controls.Add(this.dataMyItems);
+            this.tabPageMyItems.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMyItems.Name = "tabPageMyItems";
+            this.tabPageMyItems.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageMyItems.Size = new System.Drawing.Size(297, 259);
+            this.tabPageMyItems.TabIndex = 0;
+            this.tabPageMyItems.Text = "Items";
+            this.tabPageMyItems.UseVisualStyleBackColor = true;
             // 
-            // tabPageCandies
+            // tabPageMyCandies
             // 
-            this.tabPageCandies.Controls.Add(this.dataMyCandies);
-            this.tabPageCandies.Location = new System.Drawing.Point(4, 22);
-            this.tabPageCandies.Name = "tabPageCandies";
-            this.tabPageCandies.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCandies.Size = new System.Drawing.Size(297, 259);
-            this.tabPageCandies.TabIndex = 1;
-            this.tabPageCandies.Text = "Candies";
-            this.tabPageCandies.UseVisualStyleBackColor = true;
+            this.tabPageMyCandies.Controls.Add(this.dataMyCandies);
+            this.tabPageMyCandies.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMyCandies.Name = "tabPageMyCandies";
+            this.tabPageMyCandies.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageMyCandies.Size = new System.Drawing.Size(297, 259);
+            this.tabPageMyCandies.TabIndex = 1;
+            this.tabPageMyCandies.Text = "Candies";
+            this.tabPageMyCandies.UseVisualStyleBackColor = true;
             // 
             // dataMyCandies
             // 
@@ -458,6 +412,86 @@
             this.Column15.ReadOnly = true;
             this.Column15.Visible = false;
             // 
+            // tabControlPokemons
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.tabControlPokemons, 2);
+            this.tabControlPokemons.Controls.Add(this.tabPageMyPokemons);
+            this.tabControlPokemons.Controls.Add(this.tabPagePokemonSettings);
+            this.tabControlPokemons.Location = new System.Drawing.Point(3, 460);
+            this.tabControlPokemons.Name = "tabControlPokemons";
+            this.tabControlPokemons.SelectedIndex = 0;
+            this.tabControlPokemons.Size = new System.Drawing.Size(861, 222);
+            this.tabControlPokemons.TabIndex = 19;
+            // 
+            // tabPageMyPokemons
+            // 
+            this.tabPageMyPokemons.Controls.Add(this.labelPokemonSpace);
+            this.tabPageMyPokemons.Controls.Add(this.dataMyPokemons);
+            this.tabPageMyPokemons.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMyPokemons.Name = "tabPageMyPokemons";
+            this.tabPageMyPokemons.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageMyPokemons.Size = new System.Drawing.Size(853, 196);
+            this.tabPageMyPokemons.TabIndex = 0;
+            this.tabPageMyPokemons.Text = "Pokémons";
+            this.tabPageMyPokemons.UseVisualStyleBackColor = true;
+            // 
+            // tabPagePokemonSettings
+            // 
+            this.tabPagePokemonSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePokemonSettings.Name = "tabPagePokemonSettings";
+            this.tabPagePokemonSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPagePokemonSettings.Size = new System.Drawing.Size(853, 196);
+            this.tabPagePokemonSettings.TabIndex = 1;
+            this.tabPagePokemonSettings.Text = "Settings";
+            this.tabPagePokemonSettings.UseVisualStyleBackColor = true;
+            // 
+            // dataMyPokemons
+            // 
+            this.dataMyPokemons.AllowUserToAddRows = false;
+            this.dataMyPokemons.AllowUserToDeleteRows = false;
+            this.dataMyPokemons.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataMyPokemons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataMyPokemons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2,
+            this.Column3,
+            this.Column16,
+            this.Column7,
+            this.Column9,
+            this.Column10,
+            this.Column11,
+            this.Column12});
+            this.dataMyPokemons.Location = new System.Drawing.Point(3, 6);
+            this.dataMyPokemons.Name = "dataMyPokemons";
+            this.dataMyPokemons.RowHeadersWidth = 10;
+            this.dataMyPokemons.RowTemplate.Height = 40;
+            this.dataMyPokemons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataMyPokemons.Size = new System.Drawing.Size(844, 163);
+            this.dataMyPokemons.TabIndex = 8;
+            // 
+            // labelPokemonSpace
+            // 
+            this.labelPokemonSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPokemonSpace.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPokemonSpace.Location = new System.Drawing.Point(559, 172);
+            this.labelPokemonSpace.Name = "labelPokemonSpace";
+            this.labelPokemonSpace.Size = new System.Drawing.Size(285, 19);
+            this.labelPokemonSpace.TabIndex = 11;
+            this.labelPokemonSpace.Text = "label2";
+            this.labelPokemonSpace.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelPokemonHr
+            // 
+            this.labelPokemonHr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPokemonHr.Location = new System.Drawing.Point(172, 131);
+            this.labelPokemonHr.Name = "labelPokemonHr";
+            this.labelPokemonHr.Size = new System.Drawing.Size(127, 23);
+            this.labelPokemonHr.TabIndex = 20;
+            this.labelPokemonHr.Text = "POKEMON/HR";
+            this.labelPokemonHr.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Column1
             // 
             this.Column1.HeaderText = "";
@@ -494,7 +528,7 @@
             // 
             // Column9
             // 
-            this.Column9.HeaderText = "Perfect";
+            this.Column9.HeaderText = "Perfect % (IV)";
             this.Column9.Name = "Column9";
             this.Column9.ReadOnly = true;
             // 
@@ -527,30 +561,29 @@
             this.Name = "liveView";
             this.Text = "liveView";
             ((System.ComponentModel.ISupportInitialize)(this.dataMyItems)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).EndInit();
             this.grpStats.ResumeLayout(false);
             this.grpStats.PerformLayout();
-            this.grpMyPokemons.ResumeLayout(false);
             this.grpMap.ResumeLayout(false);
             this.grpMap.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tabItems.ResumeLayout(false);
-            this.tabPageItems.ResumeLayout(false);
-            this.tabPageCandies.ResumeLayout(false);
+            this.tabControlItems.ResumeLayout(false);
+            this.tabPageMyItems.ResumeLayout(false);
+            this.tabPageMyCandies.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataMyCandies)).EndInit();
+            this.tabControlPokemons.ResumeLayout(false);
+            this.tabPageMyPokemons.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.DataGridView dataMyPokemons;
         private System.Windows.Forms.DataGridView dataMyItems;
         private System.Windows.Forms.GroupBox grpStats;
         private System.Windows.Forms.ProgressBar progressLevel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textLevel;
         private System.Windows.Forms.Label labelExp;
-        private System.Windows.Forms.Label labelPokemonSpace;
         private System.Windows.Forms.Label labelBagSpace;
         private System.Windows.Forms.Label labelExpHr;
         private System.Windows.Forms.TextBox textPokecoins;
@@ -562,19 +595,24 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
         private GMap.NET.WindowsForms.GMapControl gMap;
-        private System.Windows.Forms.GroupBox grpMyPokemons;
         private System.Windows.Forms.GroupBox grpMap;
         private System.Windows.Forms.TextBox textCurrentLatLng;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelRuntime;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TabControl tabItems;
-        private System.Windows.Forms.TabPage tabPageItems;
-        private System.Windows.Forms.TabPage tabPageCandies;
+        private System.Windows.Forms.TabControl tabControlItems;
+        private System.Windows.Forms.TabPage tabPageMyItems;
+        private System.Windows.Forms.TabPage tabPageMyCandies;
         private System.Windows.Forms.DataGridView dataMyCandies;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column14;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column15;
+        private System.Windows.Forms.TabControl tabControlPokemons;
+        private System.Windows.Forms.TabPage tabPageMyPokemons;
+        private System.Windows.Forms.TabPage tabPagePokemonSettings;
+        private System.Windows.Forms.Label labelPokemonSpace;
+        private System.Windows.Forms.DataGridView dataMyPokemons;
+        private System.Windows.Forms.Label labelPokemonHr;
         private System.Windows.Forms.DataGridViewImageColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;

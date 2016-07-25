@@ -28,7 +28,6 @@ namespace PokemonGo.RocketAPI.Logic
         private GetPlayerResponse _playerProfile;
 
         private static liveView _liveView;
-        private static bool _useLiveview = true;
 
         public Logic(ISettings clientSettings)
         {
@@ -38,6 +37,17 @@ namespace PokemonGo.RocketAPI.Logic
             _inventory = new Inventory(_client);
             _navigation = new Navigation(_client);
             _stats = new Statistics();
+        }
+
+        public Logic(ISettings clientSettings, liveView view)
+        {
+            _clientSettings = clientSettings;
+            ResetCoords();
+            _client = new Client(_clientSettings);
+            _inventory = new Inventory(_client);
+            _navigation = new Navigation(_client);
+            _stats = new Statistics();
+            _liveView = view;
         }
 
         /// <summary>
@@ -187,12 +197,6 @@ namespace PokemonGo.RocketAPI.Logic
             Thread.Sleep(3000);
             Logger.Write($"Logging in via: {_clientSettings.AuthType}");
 
-            if (_useLiveview)
-            {
-                Thread t = new Thread(StartLiveView);
-                t.Start();
-            }
-
             while (true)
             {
                 try
@@ -221,7 +225,6 @@ namespace PokemonGo.RocketAPI.Logic
                 {
                     Logger.Write(e.Message + " from " + e.Source);
                     Logger.Write("Got an exception, trying automatic restart..", LogLevel.Error);
-                    _liveView.Invoke(new Action(() => _liveView.Close()));
                     await Execute();
                 }
                 await Task.Delay(10000);
@@ -658,39 +661,31 @@ namespace PokemonGo.RocketAPI.Logic
 
         public async Task PostLoginExecute()
         {
-            try
+            while (true)
             {
-                while (true)
-                {
-                    _playerProfile = await _client.GetProfile();
-                    _stats.SetUsername(_playerProfile);
-                    if (_clientSettings.EvolveAllPokemonWithEnoughCandy || _clientSettings.EvolveAllPokemonAboveIV)
-                        await EvolveAllPokemonWithEnoughCandy(_clientSettings.PokemonsToEvolve);
-                    if (_clientSettings.TransferDuplicatePokemon) await TransferDuplicatePokemon();
-                    await DisplayHighests();
-                    _stats.UpdateConsoleTitle(_inventory);
-                    await RecycleItems();
-                    await ExecuteFarmingPokestopsAndPokemons(_clientSettings.UseGPXPathing);
-                    UpdateLiveView();
-                    /*
-                * Example calls below
-                *
-                var profile = await _client.GetProfile();
-                var settings = await _client.GetSettings();
-                var mapObjects = await _client.GetMapObjects();
-                var inventory = await _client.GetInventory();
-                var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
-                */
+                _playerProfile = await _client.GetProfile();
+                _stats.SetUsername(_playerProfile);
+                if (_clientSettings.EvolveAllPokemonWithEnoughCandy || _clientSettings.EvolveAllPokemonAboveIV)
+                    await EvolveAllPokemonWithEnoughCandy(_clientSettings.PokemonsToEvolve);
+                if (_clientSettings.TransferDuplicatePokemon) await TransferDuplicatePokemon();
+                await DisplayHighests();
+                _stats.UpdateConsoleTitle(_inventory);
+                await RecycleItems();
+                await ExecuteFarmingPokestopsAndPokemons(_clientSettings.UseGPXPathing);
+                UpdateLiveView();
+                /*
+            * Example calls below
+            *
+            var profile = await _client.GetProfile();
+            var settings = await _client.GetSettings();
+            var mapObjects = await _client.GetMapObjects();
+            var inventory = await _client.GetInventory();
+            var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
+            */
                     
-                    await Task.Delay(10000);
-                }
+                await Task.Delay(10000);
             }
-            catch (Exception e)
-            {
-                _liveView.Invoke(new Action(() => _liveView.Close()));
-            }
- 
-        }
+         }
 
         private async Task RecycleItems()
         {
@@ -752,23 +747,7 @@ namespace PokemonGo.RocketAPI.Logic
             await Task.Delay(3000);
         }
 
- 
-
-        public void StartLiveView()
-        {
-            _liveView = new liveView();
-            _liveView.FormClosed += StopLiveView;
-
-            Application.EnableVisualStyles();
-            Application.Run(_liveView);
-        }
-
-        public void StopLiveView(object sender, EventArgs e)
-        {
-            _liveView = null;
-        }
-
-        private async void UpdateLiveView()
+         private async void UpdateLiveView()
         {
             if (_liveView != null)
             {
