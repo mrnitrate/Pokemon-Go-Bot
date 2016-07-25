@@ -691,7 +691,7 @@ namespace PokemonGo.RocketAPI.Logic
                 var inventory = await _client.GetInventory();
                 var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
                 */
-
+                    
                     await Task.Delay(10000);
                 }
             }
@@ -786,6 +786,12 @@ namespace PokemonGo.RocketAPI.Logic
                 {
                     _liveView.UpdateLatLng(_client.CurrentLat, _client.CurrentLng);
 
+                    if (_liveView.GetPokemonToEvolve().Count > 0)
+                        await EvolvePokemonFromList(_liveView.GetPokemonToEvolve());
+
+                    if (_liveView.GetPokemonToTransfer().Count > 0)
+                        await TransferPokemonFromList(_liveView.GetPokemonToTransfer());
+
                     var mapObjects = await _client.GetMapObjects();
 
                     var profile = await _client.GetProfile();
@@ -801,12 +807,8 @@ namespace PokemonGo.RocketAPI.Logic
                     IEnumerable<Item> myitems = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData.Item).Where(p => p != null).ToList<Item>();
                     _liveView.UpdateMyItems(myitems);
 
-                    if (_liveView.GetPokemonToEvolve().Count > 0)
-                        await EvolvePokemonFromList(_liveView.GetPokemonToEvolve());
-
-                    if (_liveView.GetPokemonToTransfer().Count > 0)
-                        await TransferPokemonFromList(_liveView.GetPokemonToTransfer());
-
+                    IEnumerable<PokemonFamily> mycandies = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData.PokemonFamily).Where(p => p != null).ToList<PokemonFamily>();
+                    _liveView.UpdateMyCandies(mycandies);
                 }
                 catch
                 {
