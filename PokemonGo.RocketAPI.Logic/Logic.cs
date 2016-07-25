@@ -696,7 +696,6 @@ namespace PokemonGo.RocketAPI.Logic
                 await DisplayHighests();
                 _stats.UpdateConsoleTitle(_inventory);
                 await RecycleItems();
-                UpdateLiveViewStartTime();
                 await ExecuteFarmingPokestopsAndPokemons(_clientSettings.UseGPXPathing);
                 UpdateLiveView();
                 /*
@@ -918,12 +917,6 @@ namespace PokemonGo.RocketAPI.Logic
         {
             if (_liveView != null)
                 _liveView.UpdateMapPokeGyms(pokeGyms);
-        }
-
-        private void UpdateLiveViewStartTime()
-        {
-            if (_liveView != null)
-                _liveView.UpdateStartTime();
         }
 
         public async Task UseLuckyEgg(Client client)

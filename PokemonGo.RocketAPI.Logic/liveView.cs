@@ -23,7 +23,7 @@ namespace PokemonGo.RocketAPI.Logic
     public partial class liveView : Form
     {
         private static ImageList _imagesList;
-        private static DateTime _startDateTime;
+        private static DateTime _startDateTime = DateTime.Now;
         private static long _startExperience = 0;
         private static long _currentExperience = 0;
         private static int _currentCatchCount = 0;
@@ -409,10 +409,6 @@ namespace PokemonGo.RocketAPI.Logic
             _mapOverlays["path"].IsVisibile = checkShowPath.Checked ? true : false;
         }
 
-        public void UpdateStartTime()
-        {
-            if (_startDateTime == null)
-                _startDateTime = DateTime.Now;
-        }
+
     }
 }
