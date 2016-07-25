@@ -681,7 +681,7 @@ namespace PokemonGo.RocketAPI.Logic
                 var inventory = await _client.GetInventory();
                 var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
                 */
-
+                    
                     await Task.Delay(10000);
                 }
             }

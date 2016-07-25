@@ -16,6 +16,7 @@ using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using PokemonGo.RocketAPI.Logic.Utils;
 
 namespace PokemonGo.RocketAPI.Logic
 {
@@ -267,8 +268,8 @@ namespace PokemonGo.RocketAPI.Logic
                 _startExperience = mystats.Experience;
             textLevel.Invoke(new Action(() => textLevel.Text = mystats.Level.ToString()));
             progressLevel.Invoke(new Action(() => progressLevel.Minimum = 0));
-            progressLevel.Invoke(new Action(() => progressLevel.Maximum = (int)mystats.NextLevelXp - (int)mystats.PrevLevelXp));
-            progressLevel.Invoke(new Action(() => progressLevel.Value = (int)mystats.Experience - (int)mystats.PrevLevelXp));
+            progressLevel.Invoke(new Action(() => progressLevel.Maximum = (int)mystats.NextLevelXp - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)));
+            progressLevel.Invoke(new Action(() => progressLevel.Value = (int)mystats.Experience - (int)mystats.PrevLevelXp - Statistics.GetXpDiff(mystats.Level)));
             labelExp.Invoke(new Action(() => labelExp.Text = ((int)mystats.Experience - (int)mystats.PrevLevelXp).ToString() + "/" + ((int)mystats.NextLevelXp - (int)mystats.PrevLevelXp).ToString()));
 
             _currentExperience = mystats.Experience;
