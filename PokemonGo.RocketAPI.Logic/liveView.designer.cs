@@ -48,6 +48,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.gMap = new GMap.NET.WindowsForms.GMapControl();
             this.grpMap = new System.Windows.Forms.GroupBox();
+            this.checkShowPath = new System.Windows.Forms.CheckBox();
+            this.checkShowPokegyms = new System.Windows.Forms.CheckBox();
+            this.checkShowPokestops = new System.Windows.Forms.CheckBox();
+            this.checkShowPokemons = new System.Windows.Forms.CheckBox();
             this.textCurrentLatLng = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -58,6 +62,8 @@
             this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column15 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPagePokedex = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
             this.tabControlPokemons = new System.Windows.Forms.TabControl();
             this.tabPageMyPokemons = new System.Windows.Forms.TabPage();
             this.labelPokemonSpace = new System.Windows.Forms.Label();
@@ -73,12 +79,6 @@
             this.Column12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tabPagePokemonSettings = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
-            this.tabPagePokedex = new System.Windows.Forms.TabPage();
-            this.label6 = new System.Windows.Forms.Label();
-            this.checkShowPokemons = new System.Windows.Forms.CheckBox();
-            this.checkShowPokestops = new System.Windows.Forms.CheckBox();
-            this.checkShowPokegyms = new System.Windows.Forms.CheckBox();
-            this.checkShowPath = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataMyItems)).BeginInit();
             this.grpStats.SuspendLayout();
             this.grpMap.SuspendLayout();
@@ -87,11 +87,11 @@
             this.tabPageMyItems.SuspendLayout();
             this.tabPageMyCandies.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataMyCandies)).BeginInit();
+            this.tabPagePokedex.SuspendLayout();
             this.tabControlPokemons.SuspendLayout();
             this.tabPageMyPokemons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).BeginInit();
             this.tabPagePokemonSettings.SuspendLayout();
-            this.tabPagePokedex.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelBagSpace
@@ -325,6 +325,58 @@
             this.grpMap.TabStop = false;
             this.grpMap.Text = "Live Map";
             // 
+            // checkShowPath
+            // 
+            this.checkShowPath.AutoSize = true;
+            this.checkShowPath.Checked = true;
+            this.checkShowPath.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkShowPath.Location = new System.Drawing.Point(345, 37);
+            this.checkShowPath.Name = "checkShowPath";
+            this.checkShowPath.Size = new System.Drawing.Size(108, 17);
+            this.checkShowPath.TabIndex = 22;
+            this.checkShowPath.Text = "Show Path taken";
+            this.checkShowPath.UseVisualStyleBackColor = true;
+            this.checkShowPath.CheckedChanged += new System.EventHandler(this.checkShowPath_CheckedChanged);
+            // 
+            // checkShowPokegyms
+            // 
+            this.checkShowPokegyms.AutoSize = true;
+            this.checkShowPokegyms.Checked = true;
+            this.checkShowPokegyms.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkShowPokegyms.Location = new System.Drawing.Point(233, 37);
+            this.checkShowPokegyms.Name = "checkShowPokegyms";
+            this.checkShowPokegyms.Size = new System.Drawing.Size(105, 17);
+            this.checkShowPokegyms.TabIndex = 21;
+            this.checkShowPokegyms.Text = "Show Pokegyms";
+            this.checkShowPokegyms.UseVisualStyleBackColor = true;
+            this.checkShowPokegyms.CheckedChanged += new System.EventHandler(this.checkShowPokegyms_CheckedChanged);
+            // 
+            // checkShowPokestops
+            // 
+            this.checkShowPokestops.AutoSize = true;
+            this.checkShowPokestops.Checked = true;
+            this.checkShowPokestops.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkShowPokestops.Location = new System.Drawing.Point(121, 37);
+            this.checkShowPokestops.Name = "checkShowPokestops";
+            this.checkShowPokestops.Size = new System.Drawing.Size(106, 17);
+            this.checkShowPokestops.TabIndex = 20;
+            this.checkShowPokestops.Text = "Show Pokestops";
+            this.checkShowPokestops.UseVisualStyleBackColor = true;
+            this.checkShowPokestops.CheckedChanged += new System.EventHandler(this.checkShowPokestops_CheckedChanged);
+            // 
+            // checkShowPokemons
+            // 
+            this.checkShowPokemons.AutoSize = true;
+            this.checkShowPokemons.Checked = true;
+            this.checkShowPokemons.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkShowPokemons.Location = new System.Drawing.Point(9, 37);
+            this.checkShowPokemons.Name = "checkShowPokemons";
+            this.checkShowPokemons.Size = new System.Drawing.Size(106, 17);
+            this.checkShowPokemons.TabIndex = 19;
+            this.checkShowPokemons.Text = "Show Pokémons";
+            this.checkShowPokemons.UseVisualStyleBackColor = true;
+            this.checkShowPokemons.CheckedChanged += new System.EventHandler(this.checkShowPokemons_CheckedChanged);
+            // 
             // textCurrentLatLng
             // 
             this.textCurrentLatLng.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -434,6 +486,26 @@
             this.Column15.Name = "Column15";
             this.Column15.ReadOnly = true;
             this.Column15.Visible = false;
+            // 
+            // tabPagePokedex
+            // 
+            this.tabPagePokedex.Controls.Add(this.label6);
+            this.tabPagePokedex.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePokedex.Name = "tabPagePokedex";
+            this.tabPagePokedex.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPagePokedex.Size = new System.Drawing.Size(297, 259);
+            this.tabPagePokedex.TabIndex = 2;
+            this.tabPagePokedex.Text = "Pokédex";
+            this.tabPagePokedex.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(126, 108);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(63, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Placeholder";
             // 
             // tabControlPokemons
             // 
@@ -579,78 +651,6 @@
             this.label5.Text = "Placeholder for now, will add grid to set specific \"catch and keep\" settings for " +
     "each pokemon";
             // 
-            // tabPagePokedex
-            // 
-            this.tabPagePokedex.Controls.Add(this.label6);
-            this.tabPagePokedex.Location = new System.Drawing.Point(4, 22);
-            this.tabPagePokedex.Name = "tabPagePokedex";
-            this.tabPagePokedex.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePokedex.Size = new System.Drawing.Size(297, 259);
-            this.tabPagePokedex.TabIndex = 2;
-            this.tabPagePokedex.Text = "Pokédex";
-            this.tabPagePokedex.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(126, 108);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(63, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Placeholder";
-            // 
-            // checkShowPokemons
-            // 
-            this.checkShowPokemons.AutoSize = true;
-            this.checkShowPokemons.Checked = true;
-            this.checkShowPokemons.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkShowPokemons.Location = new System.Drawing.Point(9, 37);
-            this.checkShowPokemons.Name = "checkShowPokemons";
-            this.checkShowPokemons.Size = new System.Drawing.Size(106, 17);
-            this.checkShowPokemons.TabIndex = 19;
-            this.checkShowPokemons.Text = "Show Pokémons";
-            this.checkShowPokemons.UseVisualStyleBackColor = true;
-            this.checkShowPokemons.CheckedChanged += new System.EventHandler(this.checkShowPokemons_CheckedChanged);
-            // 
-            // checkShowPokestops
-            // 
-            this.checkShowPokestops.AutoSize = true;
-            this.checkShowPokestops.Checked = true;
-            this.checkShowPokestops.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkShowPokestops.Location = new System.Drawing.Point(121, 37);
-            this.checkShowPokestops.Name = "checkShowPokestops";
-            this.checkShowPokestops.Size = new System.Drawing.Size(106, 17);
-            this.checkShowPokestops.TabIndex = 20;
-            this.checkShowPokestops.Text = "Show Pokestops";
-            this.checkShowPokestops.UseVisualStyleBackColor = true;
-            this.checkShowPokestops.CheckedChanged += new System.EventHandler(this.checkShowPokestops_CheckedChanged);
-            // 
-            // checkShowPokegyms
-            // 
-            this.checkShowPokegyms.AutoSize = true;
-            this.checkShowPokegyms.Checked = true;
-            this.checkShowPokegyms.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkShowPokegyms.Location = new System.Drawing.Point(233, 37);
-            this.checkShowPokegyms.Name = "checkShowPokegyms";
-            this.checkShowPokegyms.Size = new System.Drawing.Size(105, 17);
-            this.checkShowPokegyms.TabIndex = 21;
-            this.checkShowPokegyms.Text = "Show Pokegyms";
-            this.checkShowPokegyms.UseVisualStyleBackColor = true;
-            this.checkShowPokegyms.CheckedChanged += new System.EventHandler(this.checkShowPokegyms_CheckedChanged);
-            // 
-            // checkShowPath
-            // 
-            this.checkShowPath.AutoSize = true;
-            this.checkShowPath.Checked = true;
-            this.checkShowPath.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkShowPath.Location = new System.Drawing.Point(345, 37);
-            this.checkShowPath.Name = "checkShowPath";
-            this.checkShowPath.Size = new System.Drawing.Size(108, 17);
-            this.checkShowPath.TabIndex = 22;
-            this.checkShowPath.Text = "Show Path taken";
-            this.checkShowPath.UseVisualStyleBackColor = true;
-            this.checkShowPath.CheckedChanged += new System.EventHandler(this.checkShowPath_CheckedChanged);
-            // 
             // liveView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -669,13 +669,13 @@
             this.tabPageMyItems.ResumeLayout(false);
             this.tabPageMyCandies.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataMyCandies)).EndInit();
+            this.tabPagePokedex.ResumeLayout(false);
+            this.tabPagePokedex.PerformLayout();
             this.tabControlPokemons.ResumeLayout(false);
             this.tabPageMyPokemons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataMyPokemons)).EndInit();
             this.tabPagePokemonSettings.ResumeLayout(false);
             this.tabPagePokemonSettings.PerformLayout();
-            this.tabPagePokedex.ResumeLayout(false);
-            this.tabPagePokedex.PerformLayout();
             this.ResumeLayout(false);
 
         }

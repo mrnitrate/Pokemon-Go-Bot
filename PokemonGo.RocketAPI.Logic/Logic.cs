@@ -244,7 +244,16 @@ namespace PokemonGo.RocketAPI.Logic
                             LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
                                 i.Longitude));
 
-            //UpdateLiveViewMapPokemons(pokemons);
+            UpdateLiveViewMapPokemons(pokemons);
+
+            var pokemonsWild =
+                mapObjects.MapCells.SelectMany(i => i.WildPokemons)
+                    .OrderBy(
+                        i =>
+                            LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
+                                i.Longitude));
+
+            UpdateLiveViewMapPokemons(pokemonsWild);
 
             foreach (var pokemon in pokemons)
             {
@@ -422,7 +431,22 @@ namespace PokemonGo.RocketAPI.Logic
                 Logger.Write("No usable PokeStops found in your area. Is your maximum distance too small?",
                     LogLevel.Warning);
 
-            //UpdateLiveViewMapPokestops(pokeStops);
+            UpdateLiveViewMapPokestops(pokeStops);
+
+            var pokeGyms =
+                            mapObjects.MapCells.SelectMany(i => i.Forts)
+                                .Where(
+                                    i =>
+                                        i.Type == FortType.Gym &&
+                                        i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                                        ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                                            LocationUtils.CalculateDistanceInMeters(
+                                                _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
+                                                i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
+                                        _clientSettings.MaxTravelDistanceInMeters == 0
+                                );
+
+            UpdateLiveViewMapPokegyms(pokeGyms);
 
             while (pokestopList.Any())
             {
@@ -672,6 +696,7 @@ namespace PokemonGo.RocketAPI.Logic
                 await DisplayHighests();
                 _stats.UpdateConsoleTitle(_inventory);
                 await RecycleItems();
+                UpdateLiveViewStartTime();
                 await ExecuteFarmingPokestopsAndPokemons(_clientSettings.UseGPXPathing);
                 UpdateLiveView();
                 /*
@@ -765,56 +790,57 @@ namespace PokemonGo.RocketAPI.Logic
 
                     var mapObjects = await _client.GetMapObjects();
 
-                    // Update pokestops
-                    var pokeStops =
-                         mapObjects.MapCells.SelectMany(i => i.Forts)
-                             .Where(
-                                 i =>
-                                     i.Type == FortType.Checkpoint &&
-                                     i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
-                                     ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
-                                         LocationUtils.CalculateDistanceInMeters(
-                                             _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
-                                             i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
-                                     _clientSettings.MaxTravelDistanceInMeters == 0
-                             );
+                    //// Update pokestops
+                    //var pokeStops =
+                    //     mapObjects.MapCells.SelectMany(i => i.Forts)
+                    //         .Where(
+                    //             i =>
+                    //                 i.Type == FortType.Checkpoint &&
+                    //                 i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                    //                 ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                    //                     LocationUtils.CalculateDistanceInMeters(
+                    //                         _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
+                    //                         i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
+                    //                 _clientSettings.MaxTravelDistanceInMeters == 0
+                    //         );
 
-                    _liveView.UpdateMapPokeStops(pokeStops);
+                    //_liveView.UpdateMapPokeStops(pokeStops);
 
-                    // Update pokegyms
-                    var pokeGyms =
-                         mapObjects.MapCells.SelectMany(i => i.Forts)
-                             .Where(
-                                 i =>
-                                     i.Type == FortType.Gym &&
-                                     i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
-                                     ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
-                                         LocationUtils.CalculateDistanceInMeters(
-                                             _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
-                                             i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
-                                     _clientSettings.MaxTravelDistanceInMeters == 0
-                             );
+                    //// Update pokegyms
+                    //var pokeGyms =
+                    //     mapObjects.MapCells.SelectMany(i => i.Forts)
+                    //         .Where(
+                    //             i =>
+                    //                 i.Type == FortType.Gym &&
+                    //                 i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                    //                 ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                    //                     LocationUtils.CalculateDistanceInMeters(
+                    //                         _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
+                    //                         i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
+                    //                 _clientSettings.MaxTravelDistanceInMeters == 0
+                    //         );
 
-                    _liveView.UpdateMapPokeGyms(pokeGyms);
+                    //_liveView.UpdateMapPokeGyms(pokeGyms);
 
-                    // Update pokemons
-                    var pokemonsCatchable =
-                        mapObjects.MapCells.SelectMany(i => i.CatchablePokemons)
-                            .OrderBy(
-                                i =>
-                                    LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
-                                        i.Longitude));
+                    //// Update pokemons
 
-                    _liveView.UpdateMapPokemons(pokemonsCatchable);
+                    //var pokemonsCatchable =
+                    //    mapObjects.MapCells.SelectMany(i => i.CatchablePokemons)
+                    //        .OrderBy(
+                    //            i =>
+                    //                LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
+                    //                    i.Longitude));
 
-                    var pokemonsWild =
-                        mapObjects.MapCells.SelectMany(i => i.WildPokemons)
-                            .OrderBy(
-                                i =>
-                                    LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
-                                        i.Longitude));
+                    //_liveView.UpdateMapPokemons(pokemonsCatchable);
 
-                    _liveView.UpdateMapPokemons(pokemonsWild);
+                    //var pokemonsWild =
+                    //    mapObjects.MapCells.SelectMany(i => i.WildPokemons)
+                    //        .OrderBy(
+                    //            i =>
+                    //                LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
+                    //                    i.Longitude));
+
+                    //_liveView.UpdateMapPokemons(pokemonsWild);
 
                     var profile = await _client.GetProfile();
                     _liveView.UpdateMyProfile(profile.Profile);
@@ -880,6 +906,24 @@ namespace PokemonGo.RocketAPI.Logic
         {
             if (_liveView != null)
                 _liveView.UpdateMapPokemons(pokemons);
+        }
+
+        private void UpdateLiveViewMapPokemons(IEnumerable<WildPokemon> pokemons)
+        {
+            if (_liveView != null)
+                _liveView.UpdateMapPokemons(pokemons);
+        }
+
+        private void UpdateLiveViewMapPokegyms(IEnumerable<FortData> pokeGyms)
+        {
+            if (_liveView != null)
+                _liveView.UpdateMapPokeGyms(pokeGyms);
+        }
+
+        private void UpdateLiveViewStartTime()
+        {
+            if (_liveView != null)
+                _liveView.UpdateStartTime();
         }
 
         public async Task UseLuckyEgg(Client client)

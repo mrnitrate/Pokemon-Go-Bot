@@ -23,7 +23,7 @@ namespace PokemonGo.RocketAPI.Logic
     public partial class liveView : Form
     {
         private static ImageList _imagesList;
-        private static DateTime _startDateTime = DateTime.Now;
+        private static DateTime _startDateTime;
         private static long _startExperience = 0;
         private static long _currentExperience = 0;
         private static int _currentCatchCount = 0;
@@ -102,15 +102,18 @@ namespace PokemonGo.RocketAPI.Logic
             textCurrentLatLng.Invoke(new Action(() => textCurrentLatLng.Text = lat.ToString() + "," + lng.ToString()));
             _mapOverlays["avatar"].Markers[0].Position = new PointLatLng(lat, lng);
 
-            if(_lastPosition != null)
+            if(_lastPosition != null && (_lastPosition.Lat != 0 && _lastPosition.Lng != 0))
             {
-                GMarkerGoogle markerStart = new GMarkerGoogle(new PointLatLng(_lastPosition.Lat, _lastPosition.Lng), GMarkerGoogleType.arrow);
-                GMarkerGoogle markerEnd = new GMarkerGoogle(new PointLatLng(lat, lng), GMarkerGoogleType.arrow);
-                _mapOverlays["path"].Markers.Add(markerStart);
-                _mapOverlays["path"].Markers.Add(markerEnd);
-
-                _lastPosition = new PointLatLng(lat, lng);
+                List<PointLatLng> polygon = new List<PointLatLng>();
+                polygon.Add(new PointLatLng(_lastPosition.Lat, _lastPosition.Lng));
+                polygon.Add(new PointLatLng(lat, lng));
+                GMapRoute route = new GMapRoute(polygon,"route");
+ 
+                route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                route.Stroke.Width = 2;
+                _mapOverlays["path"].Routes.Add(route);
             }
+            _lastPosition = new PointLatLng(lat, lng);
         }
 
         public void UpdateMapPokeStops(IEnumerable<FortData> pokestopsOnMap)
@@ -199,8 +202,6 @@ namespace PokemonGo.RocketAPI.Logic
 
                     GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(pokemon.Latitude, pokemon.Longitude), pokemonImg);
                     marker.Tag = pokemon.EncounterId.ToString();
-                    marker.ToolTip.Offset.X = 0;
-                    marker.ToolTip.Offset.Y = 0;
                     marker.ToolTipText = pokemon.PokemonId.ToString();
                     gMap.Invoke(new Action(() => _mapOverlays["pokemons"].Markers.Add(marker)));
                 }
@@ -390,22 +391,28 @@ namespace PokemonGo.RocketAPI.Logic
 
         private void checkShowPokemons_CheckedChanged(object sender, EventArgs e)
         {
-            _mapOverlays["pokemons"].IsVisibile = checkShowPokemons.Checked;
+            _mapOverlays["pokemons"].IsVisibile = checkShowPokemons.Checked ? true:false;
         }
 
         private void checkShowPokestops_CheckedChanged(object sender, EventArgs e)
         {
-            _mapOverlays["pokestops"].IsVisibile = checkShowPokemons.Checked;
+            _mapOverlays["pokestops"].IsVisibile = checkShowPokestops.Checked  ? true : false;
         }
 
         private void checkShowPokegyms_CheckedChanged(object sender, EventArgs e)
         {
-            _mapOverlays["pokegyms"].IsVisibile = checkShowPokemons.Checked;
+            _mapOverlays["pokegyms"].IsVisibile = checkShowPokegyms.Checked  ? true : false;
         }
 
         private void checkShowPath_CheckedChanged(object sender, EventArgs e)
         {
-            _mapOverlays["path"].IsVisibile = checkShowPokemons.Checked;
+            _mapOverlays["path"].IsVisibile = checkShowPath.Checked ? true : false;
+        }
+
+        public void UpdateStartTime()
+        {
+            if (_startDateTime == null)
+                _startDateTime = DateTime.Now;
         }
     }
 }
