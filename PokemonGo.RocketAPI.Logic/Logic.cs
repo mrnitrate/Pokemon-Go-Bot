@@ -697,9 +697,10 @@ namespace PokemonGo.RocketAPI.Logic
             }
             catch (Exception e)
             {
-                _liveView.Invoke(new Action(() => _liveView.Close()));
+                Logger.Write(e.Message + " from " + e.Source);
+                Logger.Write("Got an exception, trying automatic post login restart..", LogLevel.Error);
             }
- 
+
         }
 
         private async Task RecycleItems()
