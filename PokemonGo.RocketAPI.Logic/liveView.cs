@@ -188,13 +188,13 @@ namespace PokemonGo.RocketAPI.Logic
                 if (currentList.Where(p => (string)p.Cells[3].Value == pokemon.Id.ToString()).Count() == 0)
                 {
                     if (_imagesList.Images.ContainsKey("pokemon_" + ((int)pokemon.PokemonId).ToString()))
-                        dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(_imagesList.Images[_imagesList.Images.IndexOfKey("pokemon_" + ((int)pokemon.PokemonId).ToString())], pokemon.PokemonId.ToString(), pokemon.Cp + " (" + PokemonInfo.CalculateMaxCP(pokemon).ToString() +")", pokemon.Id.ToString(),Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
+                        dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(_imagesList.Images[_imagesList.Images.IndexOfKey("pokemon_" + ((int)pokemon.PokemonId).ToString())], pokemon.PokemonId.ToString(), pokemon.Cp, PokemonInfo.CalculateMaxCP(pokemon), pokemon.Id.ToString(),Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
                     else
-                        dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(new Bitmap(40, 30), pokemon.PokemonId.ToString(), pokemon.Cp + " (" + PokemonInfo.CalculateMaxCP(pokemon).ToString() + ")", pokemon.Id.ToString(), Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
+                        dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(new Bitmap(40, 30), pokemon.PokemonId.ToString(), pokemon.Cp, PokemonInfo.CalculateMaxCP(pokemon), Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
                 }
             }
 
-            dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Sort(dataMyPokemons.Columns[1], ListSortDirection.Ascending)));
+            //dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Sort(dataMyPokemons.Columns[1], ListSortDirection.Ascending)));
             labelPokemonSpace.Invoke(new Action(() => labelPokemonSpace.Text = mypokemons.Count().ToString() + "/" + _pokemonSpace.ToString()));
         }
 
@@ -231,6 +231,34 @@ namespace PokemonGo.RocketAPI.Logic
                 total += item.Count;
             }
             labelBagSpace.Invoke(new Action(() => labelBagSpace.Text = total.ToString() + "/" +_bagSpace.ToString()));
+        }
+
+        public void UpdateMyCandies(IEnumerable<PokemonFamily> mycandies)
+        {
+            var currentList = dataMyCandies.Rows.OfType<DataGridViewRow>().ToArray();
+
+            foreach (var line in currentList)
+            {
+                if (mycandies.Where(i => i.FamilyId == (PokemonFamilyId)line.Cells[2].Value).ToList().Count == 0)
+                {
+                    dataMyCandies.Invoke(new Action(() => dataMyCandies.Rows.Remove(line)));
+                }
+            }
+
+            foreach (var candy in mycandies)
+            {
+                if (currentList.Where(p => (PokemonFamilyId)p.Cells[2].Value == candy.FamilyId).Count() == 0)
+                {
+                    dataMyCandies.Invoke(new Action(() => dataMyCandies.Rows.Add(candy.FamilyId.ToString().Replace("Family", ""), candy.Candy, candy.FamilyId)));
+                }
+                else
+                {
+                    DataGridViewRow row = currentList.Where(p => (PokemonFamilyId)p.Cells[2].Value == candy.FamilyId).FirstOrDefault();
+                    if (row != null)
+                        dataMyCandies.Invoke(new Action(() => dataMyCandies[1, row.Index].Value = candy.Candy));
+                }
+            }
+
         }
 
         public void UpdateMyStats(PlayerStats mystats)
