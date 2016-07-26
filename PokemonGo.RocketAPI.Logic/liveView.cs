@@ -367,7 +367,7 @@ namespace PokemonGo.RocketAPI.Logic
             foreach(DataGridViewRow row in dataMyPokemons.Rows)
             {
                 if ((bool)row.Cells[7].Value == true)
-                    pokemonsToEvolve.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
+                    pokemonsToEvolve.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[4].Value));
             }
 
             return pokemonsToEvolve;

@@ -509,9 +509,7 @@
             // 
             // tabControlPokemons
             // 
-            this.tabControlPokemons.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControlPokemons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this.tabControlPokemons, 2);
             this.tabControlPokemons.Controls.Add(this.tabPageMyPokemons);
             this.tabControlPokemons.Controls.Add(this.tabPagePokemonSettings);
