@@ -114,6 +114,7 @@ namespace PokemonGo.RocketAPI.Logic
                     _stats.GetStardust(profile.Profile.Currency.ToArray()[1].Amount);
                 }
                 _stats.UpdateConsoleTitle(_inventory);
+                _liveView.UpdateCatchCount();
 
                 if (encounter?.CaptureProbability?.CaptureProbability_ != null)
                 {
@@ -245,6 +246,15 @@ namespace PokemonGo.RocketAPI.Logic
 
             UpdateLiveViewMapPokemons(pokemons);
             _liveView.UpdateLatLng(_client.CurrentLat, _client.CurrentLng);
+
+            var pokemonsWild =
+                mapObjects.MapCells.SelectMany(i => i.WildPokemons)
+                    .OrderBy(
+                        i =>
+                            LocationUtils.CalculateDistanceInMeters(_client.CurrentLat, _client.CurrentLng, i.Latitude,
+                                i.Longitude));
+
+            UpdateLiveViewMapPokemons(pokemonsWild);
 
             foreach (var pokemon in pokemons)
             {
@@ -430,6 +440,21 @@ namespace PokemonGo.RocketAPI.Logic
                     LogLevel.Warning);
 
             UpdateLiveViewMapPokestops(pokeStops);
+
+            var pokeGyms =
+                            mapObjects.MapCells.SelectMany(i => i.Forts)
+                                .Where(
+                                    i =>
+                                        i.Type == FortType.Gym &&
+                                        i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                                        ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                                            LocationUtils.CalculateDistanceInMeters(
+                                                _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
+                                                i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
+                                        _clientSettings.MaxTravelDistanceInMeters == 0
+                                );
+
+            UpdateLiveViewMapPokegyms(pokeGyms);
 
             while (pokestopList.Any())
             {
@@ -838,6 +863,18 @@ namespace PokemonGo.RocketAPI.Logic
         {
             if (_liveView != null)
                 _liveView.UpdateMapPokemons(pokemons);
+        }
+
+        private void UpdateLiveViewMapPokemons(IEnumerable<WildPokemon> pokemons)
+        {
+            if (_liveView != null)
+                _liveView.UpdateMapPokemons(pokemons);
+        }
+
+        private void UpdateLiveViewMapPokegyms(IEnumerable<FortData> pokeGyms)
+        {
+            if (_liveView != null)
+                _liveView.UpdateMapPokeGyms(pokeGyms);
         }
 
         public async Task UseLuckyEgg(Client client)

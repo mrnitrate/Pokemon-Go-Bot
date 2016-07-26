@@ -26,10 +26,14 @@ namespace PokemonGo.RocketAPI.Logic
         private static DateTime _startDateTime = DateTime.Now;
         private static long _startExperience = 0;
         private static long _currentExperience = 0;
+        private static int _currentCatchCount = 0;
         private static int _bagSpace = 0;
         private static int _pokemonSpace = 0;
         private static Timer _exphrUpdater;
         private static Dictionary<string, GMapOverlay> _mapOverlays;
+        private static PointLatLng _lastPosition;
+
+        enum mapoverlay { pokemons, pokestops, pokegyms, avatar, path };
 
         public liveView()
         {
@@ -56,6 +60,9 @@ namespace PokemonGo.RocketAPI.Logic
             _mapOverlays.Add("avatar", new GMapOverlay("avatar"));
             gMap.Overlays.Add(_mapOverlays["avatar"]);
 
+            _mapOverlays.Add("path", new GMapOverlay("path"));
+            gMap.Overlays.Add(_mapOverlays["path"]);
+
             Bitmap avatar = new Bitmap(_imagesList.Images[_imagesList.Images.IndexOfKey("avatar")]);
             avatar.MakeTransparent(Color.White);
             GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(0, 0), avatar);
@@ -69,14 +76,6 @@ namespace PokemonGo.RocketAPI.Logic
             //marker.Tag = "1";
             ////marker.IsVisible = false;
             //pokemonOverlay.Markers.Add(marker);
-
-            //PointLatLng center = new PointLatLng(45.5056207, -73.6128037);
-            //for(int x=1;x<=50;x++)
-            //{
-            //    marker = new GMarkerGoogle(new PointLatLng(center.Lat, center.Lng), bmp);
-            //    scanOverlay.Markers.Add(marker);
-            //    center.Lat = center.Lat + (x * 0.00001);
-            //}
 
             _exphrUpdater = new Timer();
             _exphrUpdater.Interval = 1000;
@@ -102,6 +101,19 @@ namespace PokemonGo.RocketAPI.Logic
             gMap.Invoke(new Action(() => gMap.Position = new PointLatLng(lat, lng)));
             textCurrentLatLng.Invoke(new Action(() => textCurrentLatLng.Text = lat.ToString() + "," + lng.ToString()));
             _mapOverlays["avatar"].Markers[0].Position = new PointLatLng(lat, lng);
+
+            if(_lastPosition != null && (_lastPosition.Lat != 0 && _lastPosition.Lng != 0))
+            {
+                List<PointLatLng> polygon = new List<PointLatLng>();
+                polygon.Add(new PointLatLng(_lastPosition.Lat, _lastPosition.Lng));
+                polygon.Add(new PointLatLng(lat, lng));
+                GMapRoute route = new GMapRoute(polygon,"route");
+ 
+                route.Stroke.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                route.Stroke.Width = 2;
+                _mapOverlays["path"].Routes.Add(route);
+            }
+            _lastPosition = new PointLatLng(lat, lng);
         }
 
         public void UpdateMapPokeStops(IEnumerable<FortData> pokestopsOnMap)
@@ -139,7 +151,33 @@ namespace PokemonGo.RocketAPI.Logic
                     gMap.Invoke(new Action(() => _mapOverlays["pokestops"].Markers.Add(marker)));
                 }
             }
-            //textTotalPokestop.Invoke(new Action(() => textTotalPokestop.Text = _mapOverlays["pokestops"].Markers.Count.ToString()));
+        }
+
+        public void UpdateMapPokeGyms(IEnumerable<FortData> pokegymsOnMap)
+        {
+            var currentListPokestop = _mapOverlays["pokegyms"].Markers.ToList();
+
+            foreach (var line in currentListPokestop)
+            {
+                if (pokegymsOnMap.Where(p => p.Id.ToString() == (string)line.Tag).ToList().Count == 0)
+                {
+                    gMap.Invoke(new Action(() => _mapOverlays["pokegyms"].Markers.Remove(line)));
+                }
+            }
+
+            Bitmap pokegymImg = new Bitmap(_imagesList.Images[_imagesList.Images.IndexOfKey("pokegym")], new Size(20, 20));
+            pokegymImg.MakeTransparent(Color.White);
+
+            foreach (var pokestop in pokegymsOnMap)
+            {
+                if (currentListPokestop.Where(p => (string)p.Tag == pokestop.Id.ToString()).Count() == 0)
+                {
+                    GMarkerGoogle marker;
+                    marker = new GMarkerGoogle(new PointLatLng(pokestop.Latitude, pokestop.Longitude), pokegymImg);
+                    marker.Tag = pokestop.Id.ToString();
+                    gMap.Invoke(new Action(() => _mapOverlays["pokegyms"].Markers.Add(marker)));
+                }
+            }
         }
 
         public void UpdateMapPokemons(IEnumerable<MapPokemon> pokemonsOnMap)
@@ -168,7 +206,36 @@ namespace PokemonGo.RocketAPI.Logic
                     gMap.Invoke(new Action(() => _mapOverlays["pokemons"].Markers.Add(marker)));
                 }
             }
-            //textTotalPokemons.Invoke(new Action(() => textTotalPokemons.Text = _mapOverlays["pokemons"].Markers.Count.ToString()));
+        }
+
+        public void UpdateMapPokemons(IEnumerable<WildPokemon> pokemonsOnMap)
+        {
+            var currentListPokemons = _mapOverlays["pokemons"].Markers.ToList();
+
+            foreach (var line in currentListPokemons)
+            {
+                if (pokemonsOnMap.Where(p => p.EncounterId.ToString() == (string)line.Tag).ToList().Count == 0)
+                {
+                    gMap.Invoke(new Action(() => _mapOverlays["pokemons"].Markers.Remove(line)));
+                }
+            }
+
+            foreach (var pokemon in pokemonsOnMap)
+            {
+                if (currentListPokemons.Where(p => (string)p.Tag == pokemon.EncounterId.ToString()).Count() == 0)
+                {
+                    
+                    Bitmap pokemonImg = new Bitmap(_imagesList.Images[_imagesList.Images.IndexOfKey("pokemon_" + ((int)pokemon.PokemonData.Id).ToString())], new Size(40, 30));
+                    pokemonImg.MakeTransparent(Color.White);
+
+                    GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(pokemon.Latitude, pokemon.Longitude), pokemonImg);
+                    marker.Tag = pokemon.EncounterId.ToString();
+                    marker.ToolTip.Offset.X = 0;
+                    marker.ToolTip.Offset.Y = 0;
+                    marker.ToolTipText = pokemon.PokemonData.Id.ToString();
+                    gMap.Invoke(new Action(() => _mapOverlays["pokemons"].Markers.Add(marker)));
+                }
+            }
         }
 
         public void UpdateMyPokemons(IEnumerable<PokemonData> mypokemons)
@@ -177,7 +244,7 @@ namespace PokemonGo.RocketAPI.Logic
 
             foreach (var line in currentList)
             {
-                if (mypokemons.Where(p => p.Id.ToString() == (string)line.Cells[3].Value).ToList().Count == 0)
+                if (mypokemons.Where(p => p.Id.ToString() == (string)line.Cells[4].Value).ToList().Count == 0)
                 {
                     dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Remove(line)));
                 }
@@ -186,7 +253,7 @@ namespace PokemonGo.RocketAPI.Logic
             foreach (var pokemon in mypokemons)
             {
                 
-                if (currentList.Where(p => (string)p.Cells[3].Value == pokemon.Id.ToString()).Count() == 0)
+                if (currentList.Where(p => (string)p.Cells[4].Value == pokemon.Id.ToString()).Count() == 0)
                 {
                     if (_imagesList.Images.ContainsKey("pokemon_" + ((int)pokemon.PokemonId).ToString()))
                         dataMyPokemons.Invoke(new Action(() => dataMyPokemons.Rows.Add(_imagesList.Images[_imagesList.Images.IndexOfKey("pokemon_" + ((int)pokemon.PokemonId).ToString())], pokemon.PokemonId.ToString(), pokemon.Cp, PokemonInfo.CalculateMaxCP(pokemon), pokemon.Id.ToString(),Math.Round(PokemonInfo.CalculatePokemonPerfection(pokemon),1),PokemonInfo.GetLevel(pokemon), false, false)));
@@ -288,11 +355,14 @@ namespace PokemonGo.RocketAPI.Logic
         {
             double exphr = Math.Round((_currentExperience - _startExperience) / (DateTime.Now - _startDateTime).TotalHours);
             labelExpHr.Invoke(new Action(() => labelExpHr.Text = exphr.ToString() + " XP/HR"));
+            double pokemonhr = Math.Round(_currentCatchCount / (DateTime.Now - _startDateTime).TotalHours,2);
+            labelPokemonHr.Invoke(new Action(() => labelPokemonHr.Text = pokemonhr.ToString() + " pokemons/HR"));
             labelRuntime.Invoke(new Action(() => labelRuntime.Text = "Runtime: "+(DateTime.Now - _startDateTime).ToString(@"d\.hh\:mm\:ss")));
         }
 
         public Dictionary<string, ulong> GetPokemonToEvolve()
         {
+            dataMyPokemons.EndEdit();
             Dictionary<string, ulong> pokemonsToEvolve = new Dictionary<string, ulong>();
             foreach(DataGridViewRow row in dataMyPokemons.Rows)
             {
@@ -305,15 +375,42 @@ namespace PokemonGo.RocketAPI.Logic
 
         public Dictionary<string, ulong> GetPokemonToTransfer()
         {
+            dataMyPokemons.EndEdit();
             Dictionary<string, ulong> pokemonsToTransfer = new Dictionary<string, ulong>();
             foreach (DataGridViewRow row in dataMyPokemons.Rows)
             {
-                if ((bool)row.Cells[8].Value == true && (bool)row.Cells[6].Value == false)
-                    pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[3].Value));
+                if ((bool)row.Cells[8].Value == true && (bool)row.Cells[7].Value == false)
+                    pokemonsToTransfer.Add((string)row.Cells[1].Value, Convert.ToUInt64(row.Cells[4].Value));
             }
 
             return pokemonsToTransfer;
         }
+
+        public void UpdateCatchCount()
+        {
+            _currentCatchCount++;
+        }
+
+        private void checkShowPokemons_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapOverlays["pokemons"].IsVisibile = checkShowPokemons.Checked ? true:false;
+        }
+
+        private void checkShowPokestops_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapOverlays["pokestops"].IsVisibile = checkShowPokestops.Checked  ? true : false;
+        }
+
+        private void checkShowPokegyms_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapOverlays["pokegyms"].IsVisibile = checkShowPokegyms.Checked  ? true : false;
+        }
+
+        private void checkShowPath_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapOverlays["path"].IsVisibile = checkShowPath.Checked ? true : false;
+        }
+
 
     }
 }

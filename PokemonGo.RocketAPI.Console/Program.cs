@@ -60,7 +60,8 @@ namespace PokemonGo.RocketAPI.Console
                     t.SetApartmentState(ApartmentState.STA);
                     t.Start();
                     // Wait 2secs for form to open to get the reference
-                    t.Join(2000);
+                    while(_liveView == null)
+                        t.Join(1000);
                 }
                 new Logic.Logic(new Settings(), _liveView).Execute().Wait();
             }
