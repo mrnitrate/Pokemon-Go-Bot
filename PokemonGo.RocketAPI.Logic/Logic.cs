@@ -336,6 +336,23 @@ namespace PokemonGo.RocketAPI.Logic
 
                             var pokestopList = pokeStops.ToList();
 
+                            UpdateLiveViewMapPokestops(pokeStops);
+
+                            var pokeGyms =
+                                            mapObjects.MapCells.SelectMany(i => i.Forts)
+                                                .Where(
+                                                    i =>
+                                                        i.Type == FortType.Gym &&
+                                                        i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                                                        ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                                                            LocationUtils.CalculateDistanceInMeters(
+                                                                _clientSettings.DefaultLatitude, _clientSettings.DefaultLongitude,
+                                                                i.Latitude, i.Longitude) < _clientSettings.MaxTravelDistanceInMeters) ||
+                                                        _clientSettings.MaxTravelDistanceInMeters == 0
+                                                );
+
+                            UpdateLiveViewMapPokegyms(pokeGyms);
+
                             while (pokestopList.Any())
                             {
                                 pokestopList =
@@ -359,7 +376,7 @@ namespace PokemonGo.RocketAPI.Logic
                                         $"XP: {fortSearch.ExperienceAwarded}, Gems: {fortSearch.GemsAwarded}, Items: {StringUtils.GetSummedFriendlyNameOfItemAwardList(fortSearch.ItemsAwarded)}",
                                         LogLevel.Pokestop);
                                 }
-
+                                UpdateLiveView();
                                 await Task.Delay(1000);
                                 await RecycleItems();
                                 if (_clientSettings.TransferDuplicatePokemon) await TransferDuplicatePokemon();
