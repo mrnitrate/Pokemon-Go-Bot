@@ -108,10 +108,11 @@ namespace PoGo.NecroBot.Logic.Tasks
                     }
                 }
 
-                if (session.LogicSettings.SnipeAtPokestops)
-                {
-                    await SnipePokemonTask.Execute(session);
-                }
+                
+            }
+            if (session.LogicSettings.SnipeAtPokestops)
+            {
+                await SnipePokemonTask.Execute(session);
             }
         }
 
@@ -130,7 +131,11 @@ namespace PoGo.NecroBot.Logic.Tasks
                                 session.Settings.DefaultLatitude, session.Settings.DefaultLongitude,
                                 i.Latitude, i.Longitude) < session.LogicSettings.MaxTravelDistanceInMeters) ||
                         session.LogicSettings.MaxTravelDistanceInMeters == 0
-                );
+                ).OrderBy(
+                        i =>
+                            LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
+                                session.Client.CurrentLongitude, i.Latitude, i.Longitude)
+                ).Take(25);
 
             return pokeStops.ToList();
         }
