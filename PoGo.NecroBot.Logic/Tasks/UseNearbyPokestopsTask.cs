@@ -53,11 +53,10 @@ namespace PoGo.NecroBot.Logic.Tasks
                     });
                 }
 
-                await RecycleItemsTask.Execute(session);
-
-                if (session.LogicSettings.TransferDuplicatePokemon)
+                //Catch Lure Pokemon
+                if (pokeStop.LureInfo != null)
                 {
-                    await TransferDuplicatePokemonTask.Execute(session);
+                    await CatchLurePokemonsTask.Execute(session, pokeStop);
                 }
             }
         }
