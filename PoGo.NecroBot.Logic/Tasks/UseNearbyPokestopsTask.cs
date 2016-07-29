@@ -61,7 +61,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                 //Catch Lure Pokemon
                 if (pokeStop.LureInfo != null)
                 {
-                    await CatchLurePokemonsTask.Execute(session, pokeStop);
+                    await CatchLurePokemonsTask.Execute(session, pokeStop, cancellationToken);
                 }
             }
         }

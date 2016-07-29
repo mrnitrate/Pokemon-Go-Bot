@@ -86,8 +86,8 @@ namespace PoGo.NecroBot.Logic.Tasks
                         // Catch normal map Pokemon
                         await CatchNearbyPokemonsTask.Execute(session, cancellationToken);
                         //Catch Incense Pokemon
-                        await CatchIncensePokemonsTask.Execute(session);
-                        await UseNearbyPokestopsTask.Execute(session);
+                        await CatchIncensePokemonsTask.Execute(session, cancellationToken);
+                        await UseNearbyPokestopsTask.Execute(session, cancellationToken);
                         return true;
                     }, cancellationToken);
 
@@ -98,7 +98,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                     stopsHit = 0;
 
                     await session.Inventory.RefreshCachedInventory();
-                    await RecycleItemsTask.Execute(session);
+                    await RecycleItemsTask.Execute(session, cancellationToken);
                     if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy || session.LogicSettings.EvolveAllPokemonAboveIv)
                     {
                         await EvolvePokemonTask.Execute(session, cancellationToken);
@@ -117,7 +117,7 @@ namespace PoGo.NecroBot.Logic.Tasks
             }
             if (session.LogicSettings.SnipeAtPokestops)
             {
-                await SnipePokemonTask.Execute(session);
+                await SnipePokemonTask.Execute(session, cancellationToken);
             }
         }
 
