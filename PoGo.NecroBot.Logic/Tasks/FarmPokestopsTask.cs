@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GeoCoordinatePortable;
 using PoGo.NecroBot.Logic.Common;
@@ -22,8 +23,10 @@ namespace PoGo.NecroBot.Logic.Tasks
     {
         public static int TimesZeroXPawarded;
 
-        public static async Task Execute(ISession session)
+        public static async Task Execute(ISession session, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var distanceFromStart = LocationUtils.CalculateDistanceInMeters(
                 session.Settings.DefaultLatitude, session.Settings.DefaultLongitude,
                 session.Client.CurrentLatitude, session.Client.CurrentLongitude);
@@ -36,11 +39,11 @@ namespace PoGo.NecroBot.Logic.Tasks
                     session.Translation.GetTranslation(TranslationString.FarmPokestopsOutsideRadius, distanceFromStart),
                     LogLevel.Warning);
 
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
 
                 await session.Navigation.HumanLikeWalking(
                     new GeoCoordinate(session.Settings.DefaultLatitude, session.Settings.DefaultLongitude),
-                    session.LogicSettings.WalkingSpeedInKilometerPerHour, null);
+                    session.LogicSettings.WalkingSpeedInKilometerPerHour, null, cancellationToken);
             }
 
             var pokestopList = await GetPokeStops(session);
@@ -55,10 +58,12 @@ namespace PoGo.NecroBot.Logic.Tasks
                 });
             }
 
-            session.EventDispatcher.Send(new PokeStopListEvent {Forts = pokestopList});
+            session.EventDispatcher.Send(new PokeStopListEvent { Forts = pokestopList });
 
             while (pokestopList.Any())
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 //resort
                 pokestopList =
                     pokestopList.OrderBy(
@@ -72,23 +77,23 @@ namespace PoGo.NecroBot.Logic.Tasks
                     session.Client.CurrentLongitude, pokeStop.Latitude, pokeStop.Longitude);
                 var fortInfo = await session.Client.Fort.GetFort(pokeStop.Id, pokeStop.Latitude, pokeStop.Longitude);
 
-                session.EventDispatcher.Send(new FortTargetEvent {Name = fortInfo.Name, Distance = distance});
+                session.EventDispatcher.Send(new FortTargetEvent { Name = fortInfo.Name, Distance = distance });
 
                 await session.Navigation.HumanLikeWalking(new GeoCoordinate(pokeStop.Latitude, pokeStop.Longitude),
                     session.LogicSettings.WalkingSpeedInKilometerPerHour,
                     async () =>
                     {
                         // Catch normal map Pokemon
-                        await CatchNearbyPokemonsTask.Execute(session);
+                        await CatchNearbyPokemonsTask.Execute(session, cancellationToken);
                         //Catch Incense Pokemon
                         await CatchIncensePokemonsTask.Execute(session);
                         await UseNearbyPokestopsTask.Execute(session);
                         return true;
-                    });
+                    }, cancellationToken);
 
-                await eggWalker.ApplyDistance(distance);
+                await eggWalker.ApplyDistance(distance, cancellationToken);
 
-                if (++stopsHit%5 == 0) //TODO: OR item/pokemon bag is full
+                if (++stopsHit % 5 == 0) //TODO: OR item/pokemon bag is full
                 {
                     stopsHit = 0;
 
@@ -96,15 +101,15 @@ namespace PoGo.NecroBot.Logic.Tasks
                     await RecycleItemsTask.Execute(session);
                     if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy || session.LogicSettings.EvolveAllPokemonAboveIv)
                     {
-                        await EvolvePokemonTask.Execute(session);
+                        await EvolvePokemonTask.Execute(session, cancellationToken);
                     }
                     if (session.LogicSettings.TransferDuplicatePokemon)
                     {
-                        await TransferDuplicatePokemonTask.Execute(session);
+                        await TransferDuplicatePokemonTask.Execute(session, cancellationToken);
                     }
                     if (session.LogicSettings.RenameAboveIv)
                     {
-                        await RenamePokemonTask.Execute(session);
+                        await RenamePokemonTask.Execute(session, cancellationToken);
                     }
                 }
 
