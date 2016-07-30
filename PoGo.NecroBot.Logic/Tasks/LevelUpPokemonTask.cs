@@ -27,7 +27,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                     await session.Inventory.UpgradePokemon(DisplayPokemonStatsTask.PokemonId[randomNumber]);
                 if (upgradeResult.Result.ToString().ToLower().Contains("success"))
                 {
-                    Logger.Write("Pokemon Upgraded:" + upgradeResult.UpgradedPokemon.PokemonId + ":" +
+                    Logger.Write("Pokemon Upgraded:" + upgradeResult.UpgradedPokemon.PokemonId +" ("+ upgradeResult.UpgradedPokemon.NumUpgrades+ ") :" +
                                  upgradeResult.UpgradedPokemon.Cp);
                 }
                 else if (upgradeResult.Result.ToString().ToLower().Contains("insufficient"))
@@ -38,7 +38,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                 {
                     Logger.Write(
                         "Pokemon Upgrade Failed Unknown Error, Pokemon Could Be Max Level For Your Level The Pokemon That Caused Issue Was:" +
-                        upgradeResult.UpgradedPokemon.PokemonId);
+                        upgradeResult.Result.ToString());
                 }
             }
             else if (session.LogicSettings.LevelUpByCPorIv.ToLower().Contains("cp"))
