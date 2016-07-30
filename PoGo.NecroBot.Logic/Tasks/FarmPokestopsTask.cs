@@ -107,7 +107,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                     {
                         await TransferDuplicatePokemonTask.Execute(session, cancellationToken);
                     }
-                    if (session.LogicSettings.RenameAboveIv)
+                    if (session.LogicSettings.RenamePokemon)
                     {
                         await RenamePokemonTask.Execute(session, cancellationToken);
                     }
@@ -115,7 +115,7 @@ namespace PoGo.NecroBot.Logic.Tasks
 
                 
             }
-            if (session.LogicSettings.SnipeAtPokestops)
+            if (session.LogicSettings.SnipeAtPokestops || session.LogicSettings.UseSnipeLocationServer))
             {
                 await SnipePokemonTask.Execute(session, cancellationToken);
             }
