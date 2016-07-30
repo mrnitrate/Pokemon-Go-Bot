@@ -28,13 +28,15 @@ namespace PoGo.NecroBot.Logic.Service
             {
                 EvolvePokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
             }
-            if (_session.LogicSettings.AutomaticallyLevelUpPokemon)
-            {
-                LevelUpPokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
-            }
+            
             if (_session.LogicSettings.TransferDuplicatePokemon)
             {
                 TransferDuplicatePokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
+            }
+
+            if (_session.LogicSettings.AutomaticallyLevelUpPokemon)
+            {
+                LevelUpPokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
             }
 
             if (_session.LogicSettings.RenamePokemon)
