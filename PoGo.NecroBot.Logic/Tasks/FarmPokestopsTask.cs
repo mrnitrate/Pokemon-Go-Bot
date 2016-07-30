@@ -92,7 +92,10 @@ namespace PoGo.NecroBot.Logic.Tasks
                     }, cancellationToken);
 
                 await eggWalker.ApplyDistance(distance, cancellationToken);
-
+                if (session.LogicSettings.SnipeAtPokestops || session.LogicSettings.UseSnipeLocationServer)
+                {
+                    await SnipePokemonTask.Execute(session, cancellationToken);
+                }
                 if (++stopsHit%5 == 0) //TODO: OR item/pokemon bag is full
                 {
                     stopsHit = 0;
@@ -118,12 +121,8 @@ namespace PoGo.NecroBot.Logic.Tasks
                     }
                 }
 
-                
             }
-            if (session.LogicSettings.SnipeAtPokestops || session.LogicSettings.UseSnipeLocationServer)
-            {
-                await SnipePokemonTask.Execute(session, cancellationToken);
-            }
+            
         }
 
         private static async Task<List<FortData>> GetPokeStops(ISession session)
