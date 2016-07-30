@@ -106,6 +106,7 @@ namespace PoGo.NecroBot.CLI
         public double DefaultAltitude = 10;
         public double DefaultLatitude = 40.785091;
         public double DefaultLongitude = -73.968285;
+        public int MaxSpawnLocationOffset = 10;
         public int DelayBetweenPokemonCatch = 2000;
         public int DelayBetweenPlayerActions = 5000;
         public float EvolveAboveIvValue = 95;
@@ -138,6 +139,7 @@ namespace PoGo.NecroBot.CLI
         public bool SnipeAtPokestops = false;
         public int MinPokeballsToSnipe = 20;
         public int MinPokeballsWhileSnipe = 0;
+        public int MaxPokeballsPerPokemon = 6;
         public string SnipeLocationServer = "localhost";
         public int SnipeLocationServerPort = 16969;
         public bool UseSnipeLocationServer = false;
@@ -478,11 +480,14 @@ namespace PoGo.NecroBot.CLI
             }
         }
 
+        // Never spawn at the same position.
+        private readonly Random _rand = new Random();
+
         double ISettings.DefaultLatitude
         {
             get
             {
-                return _settings.DefaultLatitude;
+                return _settings.DefaultLatitude + _rand.NextDouble() * (_settings.MaxSpawnLocationOffset / 111111);
             }
 
             set
@@ -495,7 +500,7 @@ namespace PoGo.NecroBot.CLI
         {
             get
             {
-                return _settings.DefaultLongitude;
+                return _settings.DefaultLongitude + _rand.NextDouble() * (_settings.MaxSpawnLocationOffset / 111111 / Math.Cos(_settings.DefaultLatitude));
             }
 
             set
@@ -621,6 +626,8 @@ namespace PoGo.NecroBot.CLI
         public bool SnipeAtPokestops => _settings.SnipeAtPokestops;
         public int MinPokeballsToSnipe => _settings.MinPokeballsToSnipe;
         public int MinPokeballsWhileSnipe => _settings.MinPokeballsWhileSnipe;
+        public int MaxPokeballsPerPokemon => _settings.MaxPokeballsPerPokemon;
+
         public SnipeSettings PokemonToSnipe => _settings.PokemonToSnipe;
         public string SnipeLocationServer => _settings.SnipeLocationServer;
         public int SnipeLocationServerPort => _settings.SnipeLocationServerPort;
