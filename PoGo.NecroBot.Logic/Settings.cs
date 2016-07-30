@@ -143,6 +143,10 @@ namespace PoGo.NecroBot.CLI
         public string SnipeLocationServer = "localhost";
         public int SnipeLocationServerPort = 16969;
         public bool UseSnipeLocationServer = false;
+        public bool AutomaticallyLevelUpPokemon = true;
+        public string LevelUpByCPorIV = "iv";
+        public float UpgradePokemonIVMinimum = 95;
+        public float UpgradePokemonCPMinimum = 1000;
         public bool UseTransferIVForSnipe = false;
         public bool SnipeIgnoreUnknownIV = false;
         public int MinDelayBetweenSnipes = 20000;
@@ -192,25 +196,26 @@ namespace PoGo.NecroBot.CLI
             PokemonId.Victreebel,
             PokemonId.Golem,
             PokemonId.Slowbro,
-            PokemonId.Farfetchd,
+            //PokemonId.Farfetchd,
             PokemonId.Muk,
             PokemonId.Exeggutor,
             PokemonId.Lickitung,
             PokemonId.Chansey,
-            PokemonId.Kangaskhan,
-            PokemonId.MrMime,
-            PokemonId.Gyarados,
-            PokemonId.Lapras,
+            //PokemonId.Kangaskhan,
+            //PokemonId.MrMime,
+            //PokemonId.Tauros,
+            //PokemonId.Gyarados,
+            //PokemonId.Lapras,
             PokemonId.Ditto,
-            PokemonId.Vaporeon,
-            PokemonId.Jolteon,
-            PokemonId.Flareon,
-            PokemonId.Porygon,
-            PokemonId.Snorlax,
+            //PokemonId.Vaporeon,
+            //PokemonId.Jolteon,
+            //PokemonId.Flareon,
+            //PokemonId.Porygon,
+            //PokemonId.Snorlax,
             PokemonId.Articuno,
             PokemonId.Zapdos,
             PokemonId.Moltres,
-            PokemonId.Dragonite,
+            //PokemonId.Dragonite,
             PokemonId.Mewtwo,
             PokemonId.Mew
         };
@@ -277,15 +282,30 @@ namespace PoGo.NecroBot.CLI
 
         public Dictionary<PokemonId, TransferFilter> PokemonsTransferFilter = new Dictionary<PokemonId, TransferFilter>
         {
-            //criteria: based on NY Central Park and Tokyo variety (will be constantly updated)
+            //criteria: based on NY Central Park and Tokyo variety + sniping optimization
             {PokemonId.Golduck, new TransferFilter(1800, 95, 1)},
+            {PokemonId.Farfetchd, new TransferFilter(1250, 80, 1)},
             {PokemonId.Krabby, new TransferFilter(1250, 95, 1)},
+            {PokemonId.Kangaskhan, new TransferFilter(1500, 60, 1)},
             {PokemonId.Horsea, new TransferFilter(1250, 95, 1)},
             {PokemonId.Staryu, new TransferFilter(1250, 95, 1)},
+            {PokemonId.MrMime, new TransferFilter(1250, 40, 1)},
+            {PokemonId.Scyther, new TransferFilter(1800, 80, 1)},
             {PokemonId.Jynx, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Pinsir, new TransferFilter(1700, 95, 1)},
+            {PokemonId.Electabuzz, new TransferFilter(1250, 80, 1)},
+            {PokemonId.Magmar, new TransferFilter(1500, 80, 1)},
+            {PokemonId.Pinsir, new TransferFilter(1800, 95, 1)},
+            {PokemonId.Tauros, new TransferFilter(1250, 90, 1)},
             {PokemonId.Magikarp, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Eevee, new TransferFilter(1250, 95, 1)}
+            {PokemonId.Gyarados, new TransferFilter(1250, 90, 1)},
+            {PokemonId.Lapras, new TransferFilter(1800, 80, 1)},
+            {PokemonId.Eevee, new TransferFilter(1250, 95, 1)},
+            {PokemonId.Vaporeon, new TransferFilter(1500, 90, 1)},
+            {PokemonId.Jolteon, new TransferFilter(1500, 90, 1)},
+            {PokemonId.Flareon, new TransferFilter(1500, 90, 1)},
+            {PokemonId.Porygon, new TransferFilter(1250, 60, 1)},
+            {PokemonId.Snorlax, new TransferFilter(2600, 90, 1)},
+            {PokemonId.Dragonite, new TransferFilter(2600, 90, 1)}
         };
 
         public SnipeSettings PokemonToSnipe = new SnipeSettings
@@ -487,7 +507,7 @@ namespace PoGo.NecroBot.CLI
         {
             get
             {
-                return _settings.DefaultLatitude + _rand.NextDouble() * (_settings.MaxSpawnLocationOffset / 111111);
+                return _settings.DefaultLatitude + _rand.NextDouble() * ((double)_settings.MaxSpawnLocationOffset / 111111);
             }
 
             set
@@ -500,7 +520,7 @@ namespace PoGo.NecroBot.CLI
         {
             get
             {
-                return _settings.DefaultLongitude + _rand.NextDouble() * (_settings.MaxSpawnLocationOffset / 111111 / Math.Cos(_settings.DefaultLatitude));
+                return _settings.DefaultLongitude + _rand.NextDouble() * ((double)_settings.MaxSpawnLocationOffset / 111111 / Math.Cos(_settings.DefaultLatitude));
             }
 
             set
@@ -590,6 +610,10 @@ namespace PoGo.NecroBot.CLI
         public bool TransferConfigAndAuthOnUpdate => _settings.TransferConfigAndAuthOnUpdate;
         public float KeepMinIvPercentage => _settings.KeepMinIvPercentage;
         public int KeepMinCp => _settings.KeepMinCp;
+        public bool AutomaticallyLevelUpPokemon => _settings.AutomaticallyLevelUpPokemon;
+        public string LevelUpByCPorIV => _settings.LevelUpByCPorIV;
+        public float UpgradePokemonIVMinimum => _settings.UpgradePokemonIVMinimum;
+        public float UpgradePokemonCPMinimum => _settings.UpgradePokemonCPMinimum;
         public double WalkingSpeedInKilometerPerHour => _settings.WalkingSpeedInKilometerPerHour;
         public bool EvolveAllPokemonWithEnoughCandy => _settings.EvolveAllPokemonWithEnoughCandy;
         public bool KeepPokemonsThatCanEvolve => _settings.KeepPokemonsThatCanEvolve;
