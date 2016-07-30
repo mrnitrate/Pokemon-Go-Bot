@@ -51,18 +51,21 @@ namespace PoGo.NecroBot.Logic.Utils
             {
                 var ep = stat.NextLevelXp - stat.PrevLevelXp - (stat.Experience - stat.PrevLevelXp);
                 var time = Math.Round(ep/(TotalExperience/GetRuntime()), 2);
+                var days = 0.00;
                 var hours = 0.00;
                 var minutes = 0.00;
                 if (double.IsInfinity(time) == false && time > 0)
                 {
-                    time = Convert.ToDouble(TimeSpan.FromHours(time).ToString("h\\.mm"), CultureInfo.InvariantCulture);
-                    hours = Math.Truncate(time);
-                    minutes = Math.Round((time - hours)*100);
+                    var timespan = TimeSpan.FromHours(time);
+                    days = timespan.Days;
+                    hours = timespan.Hours;
+                    minutes = timespan.Minutes;
                 }
 
                 output = new StatsExport
                 {
                     Level = stat.Level,
+                    DaysUntilLvl = days,
                     HoursUntilLvl = hours,
                     MinutesUntilLevel = minutes,
                     CurrentXp = stat.Experience - stat.PrevLevelXp - GetXpDiff(stat.Level),
@@ -79,7 +82,7 @@ namespace PoGo.NecroBot.Logic.Utils
 
         public string GetTemplatedStats(string template, string xpTemplate)
         {
-            var xpStats = string.Format(xpTemplate, _exportStats.Level, _exportStats.HoursUntilLvl,
+            var xpStats = string.Format(xpTemplate, _exportStats.Level, _exportStats.DaysUntilLvl, _exportStats.HoursUntilLvl,
                 _exportStats.MinutesUntilLevel, _exportStats.CurrentXp, _exportStats.LevelupXp);
             return string.Format(template, _playerName, FormatRuntime(), xpStats, TotalExperience/GetRuntime(),
                 TotalPokemons/GetRuntime(),
@@ -111,6 +114,7 @@ namespace PoGo.NecroBot.Logic.Utils
     public class StatsExport
     {
         public long CurrentXp;
+        public double DaysUntilLvl;
         public double HoursUntilLvl;
         public int Level;
         public long LevelupXp;

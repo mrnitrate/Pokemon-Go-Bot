@@ -289,7 +289,7 @@ namespace PoGo.NecroBot.Logic.Common
             new KeyValuePair<TranslationString, string>(TranslationString.StatsTemplateString,
                 "{0} - Runtime {1} - Lvl: {2} | EXP/H: {3:n0} | P/H: {4:n0} | Stardust: {5:n0} | Transfered: {6:n0} | Recycled: {7:n0}"),
             new KeyValuePair<TranslationString, string>(TranslationString.StatsXpTemplateString,
-                "{0} (Advance in {1}h {2}m | {3:n0}/{4:n0} XP)"),
+                "{0} (Advance in {1}d {2}h {3}m | {4:n0}/{5:n0} XP)"),
             new KeyValuePair<TranslationString, string>(TranslationString.RequireInputText,
                 "Program will continue after the key press..."),
             new KeyValuePair<TranslationString, string>(TranslationString.GoogleTwoFactorAuth,
