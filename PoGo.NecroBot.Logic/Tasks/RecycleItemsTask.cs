@@ -19,6 +19,7 @@ namespace PoGo.NecroBot.Logic.Tasks
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            await session.Inventory.RefreshCachedInventory();
             var currentTotalItems = await session.Inventory.GetTotalItemCount();
             if ((session.Profile.PlayerData.MaxItemStorage * session.LogicSettings.RecycleInventoryAtUsagePercentage) > currentTotalItems)
                 return;
@@ -26,19 +27,19 @@ namespace PoGo.NecroBot.Logic.Tasks
             if (!session.LogicSettings.VerboseRecycling)
                 Logger.Write(session.Translation.GetTranslation(TranslationString.RecyclingQuietly));
 
-            var items = await session.Inventory.GetItemsToRecycle(session);
+            //var items = await session.Inventory.GetItemsToRecycle(session);
 
-            foreach (var item in items)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
+            //foreach (var item in items)
+            //{
+            //    cancellationToken.ThrowIfCancellationRequested();
 
-                await session.Client.Inventory.RecycleItem(item.ItemId, item.Count);
+            //    await session.Client.Inventory.RecycleItem(item.ItemId, item.Count);
 
-                if (session.LogicSettings.VerboseRecycling)
-                    session.EventDispatcher.Send(new ItemRecycledEvent {Id = item.ItemId, Count = item.Count});
+            //    if (session.LogicSettings.VerboseRecycling)
+            //        session.EventDispatcher.Send(new ItemRecycledEvent {Id = item.ItemId, Count = item.Count});
 
-                DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
-            }
+            //    DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
+            //}
 
             if (session.LogicSettings.TotalAmountOfPokebalsToKeep != 0)
             {

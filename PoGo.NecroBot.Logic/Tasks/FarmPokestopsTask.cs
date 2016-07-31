@@ -100,7 +100,6 @@ namespace PoGo.NecroBot.Logic.Tasks
                 {
                     stopsHit = 0;
 
-                    await session.Inventory.RefreshCachedInventory();
                     await RecycleItemsTask.Execute(session, cancellationToken);
 
                     if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy ||
