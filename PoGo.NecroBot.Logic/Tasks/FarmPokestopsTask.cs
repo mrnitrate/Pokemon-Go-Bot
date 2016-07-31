@@ -102,6 +102,14 @@ namespace PoGo.NecroBot.Logic.Tasks
 
                     await RecycleItemsTask.Execute(session, cancellationToken);
 
+                    if (session.LogicSettings.UseLuckyEggConstantly)
+                    {
+                        await UseLuckyEggConstantlyTask.Execute(session, cancellationToken);
+                    }
+                    if (session.LogicSettings.UseIncenseConstantly)
+                    {
+                        await UseIncenseConstantlyTask.Execute(session, cancellationToken);
+                    }
                     if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy ||
                         session.LogicSettings.EvolveAllPokemonAboveIv)
                     {
@@ -115,20 +123,15 @@ namespace PoGo.NecroBot.Logic.Tasks
                     {
                         await LevelUpPokemonTask.Execute(session, cancellationToken);
                     }
-                    if (session.LogicSettings.UseIncenseConstantly)
-                    {
-                        await UseIncenseConstantlyTask.Execute(session, cancellationToken);
-                    }
                     if (session.LogicSettings.RenamePokemon)
                     {
                         await RenamePokemonTask.Execute(session, cancellationToken);
                     }
-
                     if (session.LogicSettings.AutoFavoritePokemon)
                     {
                         await FavoritePokemonTask.Execute(session, cancellationToken);
                     }
-                    await GetPokeDexCount.Execute(session, cancellationToken);
+
                 }
 
             }
@@ -150,11 +153,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                                 session.Settings.DefaultLatitude, session.Settings.DefaultLongitude,
                                 i.Latitude, i.Longitude) < session.LogicSettings.MaxTravelDistanceInMeters) ||
                         session.LogicSettings.MaxTravelDistanceInMeters == 0
-                ).OrderBy(
-                        i =>
-                            LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
-                                session.Client.CurrentLongitude, i.Latitude, i.Longitude)
-                ).Take(25);
+                );
 
             return pokeStops.ToList();
         }

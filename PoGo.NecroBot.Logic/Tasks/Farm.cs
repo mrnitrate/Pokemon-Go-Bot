@@ -24,6 +24,15 @@ namespace PoGo.NecroBot.Logic.Service
 
         public void Run(CancellationToken cancellationToken)
         {
+
+            if (_session.LogicSettings.UseLuckyEggConstantly)
+            {
+                UseLuckyEggConstantlyTask.Execute(_session, cancellationToken).Wait(cancellationToken);
+            }
+            if (_session.LogicSettings.UseIncenseConstantly)
+            {
+                UseIncenseConstantlyTask.Execute(_session, cancellationToken).Wait(cancellationToken);
+            }
             if (_session.LogicSettings.EvolveAllPokemonAboveIv || _session.LogicSettings.EvolveAllPokemonWithEnoughCandy)
             {
                 EvolvePokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
@@ -38,14 +47,7 @@ namespace PoGo.NecroBot.Logic.Service
             {
                 LevelUpPokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
             }
-            if (_session.LogicSettings.UseLuckyEggConstantly)
-            {
-                UseLuckyEggConstantlyTask.Execute(_session, cancellationToken).Wait(cancellationToken);
-            }
-            if (_session.LogicSettings.UseIncenseConstantly)
-            {
-                UseIncenseConstantlyTask.Execute(_session, cancellationToken).Wait(cancellationToken);
-            }
+
             GetPokeDexCount.Execute(_session, cancellationToken).Wait(cancellationToken);
 
             if (_session.LogicSettings.RenamePokemon)
@@ -57,6 +59,8 @@ namespace PoGo.NecroBot.Logic.Service
             {
                 FavoritePokemonTask.Execute(_session, cancellationToken).Wait(cancellationToken);
             }
+
+            GetPokeDexCount.Execute(_session, cancellationToken).Wait(cancellationToken);
 
             RecycleItemsTask.Execute(_session, cancellationToken).Wait(cancellationToken);
 
