@@ -72,6 +72,10 @@ namespace PoGo.NecroBot.Logic.Tasks
             int masterBallsToRecycle = 0;
 
             int totalBallsCount = pokeBallsCount + greatBallsCount + ultraBallsCount + masterBallsCount;
+            if (session.LogicSettings.ShowPokeballCountsBeforeRecycle)
+                Logger.Write(session.Translation.GetTranslation(TranslationString.CurrentPokeballInv,
+                    pokeBallsCount, greatBallsCount, ultraBallsCount,
+                    masterBallsCount));
             if (totalBallsCount > session.LogicSettings.TotalAmountOfPokebalsToKeep)
             {
                 int diff = totalBallsCount - session.LogicSettings.TotalAmountOfPokebalsToKeep;
