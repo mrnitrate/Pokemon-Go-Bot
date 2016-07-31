@@ -124,6 +124,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                     {
                         await FavoritePokemonTask.Execute(session, cancellationToken);
                     }
+                    await GetPokeDexCount.Execute(session, cancellationToken);
                 }
 
             }
