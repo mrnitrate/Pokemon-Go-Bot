@@ -19,7 +19,6 @@ namespace PoGo.NecroBot.Logic.Tasks
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await session.Inventory.RefreshCachedInventory();
             var currentTotalItems = await session.Inventory.GetTotalItemCount();
             if ((session.Profile.PlayerData.MaxItemStorage * session.LogicSettings.RecycleInventoryAtUsagePercentage) > currentTotalItems)
                 return;
@@ -27,33 +26,50 @@ namespace PoGo.NecroBot.Logic.Tasks
             if (!session.LogicSettings.VerboseRecycling)
                 Logger.Write(session.Translation.GetTranslation(TranslationString.RecyclingQuietly), LogLevel.Recycling);
 
-            //var items = await session.Inventory.GetItemsToRecycle(session);
-
-            //foreach (var item in items)
-            //{
-            //    cancellationToken.ThrowIfCancellationRequested();
-
-            //    await session.Client.Inventory.RecycleItem(item.ItemId, item.Count);
-
-            //    if (session.LogicSettings.VerboseRecycling)
-            //        session.EventDispatcher.Send(new ItemRecycledEvent {Id = item.ItemId, Count = item.Count});
-
-            //    DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
-            //}
-
             if (session.LogicSettings.TotalAmountOfPokeballsToKeep != 0)
             {
+                var currentAmountOfPokeballs = await session.Inventory.GetItemAmountByType(ItemId.ItemPokeBall);
+                var currentAmountOfGreatballs = await session.Inventory.GetItemAmountByType(ItemId.ItemGreatBall);
+                var currentAmountOfUltraballs = await session.Inventory.GetItemAmountByType(ItemId.ItemUltraBall);
+                var currentAmountOfMasterballs = await session.Inventory.GetItemAmountByType(ItemId.ItemMasterBall);
+
+                if (session.LogicSettings.ShowPokeballCountsBeforeRecycle)
+                    Logger.Write(session.Translation.GetTranslation(TranslationString.CurrentPokeballInv,
+                        currentAmountOfPokeballs, currentAmountOfGreatballs, currentAmountOfUltraballs,
+                        currentAmountOfMasterballs));
+
                 await OptimizedRecycleBalls(session, cancellationToken);
             }
 
-            if (session.LogicSettings.TotalAmountOfPotionsToKeep != 0)
+            if (session.LogicSettings.TotalAmountOfPotionsToKeep>=0)
             {
                 await OptimizedRecyclePotions(session, cancellationToken);
             }
 
-            if (session.LogicSettings.TotalAmountOfRevivesToKeep != 0)
+            if (session.LogicSettings.TotalAmountOfRevivesToKeep>=0)
             {
                 await OptimizedRecycleRevives(session, cancellationToken);
+            }
+
+            currentTotalItems = await session.Inventory.GetTotalItemCount();
+            if ((session.Profile.PlayerData.MaxItemStorage * session.LogicSettings.RecycleInventoryAtUsagePercentage) > currentTotalItems)
+            {
+                await session.Inventory.RefreshCachedInventory();
+                return;
+            }
+
+            var items = await session.Inventory.GetItemsToRecycle(session);
+
+            foreach (var item in items)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await session.Client.Inventory.RecycleItem(item.ItemId, item.Count);
+
+                if (session.LogicSettings.VerboseRecycling)
+                    session.EventDispatcher.Send(new ItemRecycledEvent { Id = item.ItemId, Count = item.Count });
+
+                DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
             }
 
             await session.Inventory.RefreshCachedInventory();
@@ -68,14 +84,8 @@ namespace PoGo.NecroBot.Logic.Tasks
 
             int pokeBallsToRecycle = 0;
             int greatBallsToRecycle = 0;
-            /*
-            */
 
             int totalBallsCount = pokeBallsCount + greatBallsCount + ultraBallsCount + masterBallsCount;
-            if (session.LogicSettings.ShowPokeballCountsBeforeRecycle)
-                Logger.Write(session.Translation.GetTranslation(TranslationString.CurrentPokeballInv,
-                    pokeBallsCount, greatBallsCount, ultraBallsCount,
-                    masterBallsCount));
             if (totalBallsCount > session.LogicSettings.TotalAmountOfPokeballsToKeep)
             {
                 int diff = totalBallsCount - session.LogicSettings.TotalAmountOfPokeballsToKeep;
