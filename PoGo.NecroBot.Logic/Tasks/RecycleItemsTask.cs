@@ -25,7 +25,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                 return;
 
             if (!session.LogicSettings.VerboseRecycling)
-                Logger.Write(session.Translation.GetTranslation(TranslationString.RecyclingQuietly));
+                Logger.Write(session.Translation.GetTranslation(TranslationString.RecyclingQuietly), LogLevel.Recycling);
 
             //var items = await session.Inventory.GetItemsToRecycle(session);
 
@@ -69,8 +69,6 @@ namespace PoGo.NecroBot.Logic.Tasks
             int pokeBallsToRecycle = 0;
             int greatBallsToRecycle = 0;
             /*
-            int ultraBallsToRecycle = 0;
-            int masterBallsToRecycle = 0;
             */
 
             int totalBallsCount = pokeBallsCount + greatBallsCount + ultraBallsCount + masterBallsCount;
