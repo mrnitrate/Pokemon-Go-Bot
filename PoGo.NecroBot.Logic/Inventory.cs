@@ -111,7 +111,7 @@ namespace PoGo.NecroBot.Logic
 
                     if (settings.CandyToEvolve > 0)
                     {
-                        var amountPossible = familyCandy.Candy_/settings.CandyToEvolve;
+                        var amountPossible = familyCandy.Candy_ / (settings.CandyToEvolve - 2);
                         if (amountPossible > amountToSkip)
                             amountToSkip = amountPossible;
                     }
@@ -222,6 +222,14 @@ namespace PoGo.NecroBot.Logic
             return inventory.InventoryDelta.InventoryItems
                 .Select(i => i.InventoryItemData?.Item)
                 .Where(p => p != null);
+        }
+
+        public async Task<int> GetTotalItemCount()
+        {
+            var myItems = (await GetItems()).ToList();
+            int myItemCount = 0;
+            foreach (var myItem in myItems) myItemCount += myItem.Count;
+            return myItemCount;
         }
 
         public async Task<IEnumerable<ItemData>> GetItemsToRecycle(ISession session)

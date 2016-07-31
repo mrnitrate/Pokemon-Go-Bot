@@ -41,9 +41,9 @@ namespace PoGo.NecroBot.Logic.Tasks
 
                 await Task.Delay(1000, cancellationToken);
 
-                await session.Navigation.HumanLikeWalking(
+                await session.Navigation.Move(
                     new GeoCoordinate(session.Settings.DefaultLatitude, session.Settings.DefaultLongitude),
-                    session.LogicSettings.WalkingSpeedInKilometerPerHour, null, cancellationToken);
+                    session.LogicSettings.WalkingSpeedInKilometerPerHour, null, cancellationToken, session.LogicSettings.DisableHumanWalking);
             }
 
             var pokestopList = await GetPokeStops(session);
@@ -79,7 +79,7 @@ namespace PoGo.NecroBot.Logic.Tasks
 
                 session.EventDispatcher.Send(new FortTargetEvent {Name = fortInfo.Name, Distance = distance});
 
-                await session.Navigation.HumanLikeWalking(new GeoCoordinate(pokeStop.Latitude, pokeStop.Longitude),
+                    await session.Navigation.Move(new GeoCoordinate(pokeStop.Latitude, pokeStop.Longitude),
                     session.LogicSettings.WalkingSpeedInKilometerPerHour,
                     async () =>
                     {
@@ -89,7 +89,7 @@ namespace PoGo.NecroBot.Logic.Tasks
                         await CatchIncensePokemonsTask.Execute(session, cancellationToken);
                         await UseNearbyPokestopsTask.Execute(session, cancellationToken);
                         return true;
-                    }, cancellationToken);
+                    }, cancellationToken, session.LogicSettings.DisableHumanWalking);
 
                 await eggWalker.ApplyDistance(distance, cancellationToken);
                 if (session.LogicSettings.SnipeAtPokestops || session.LogicSettings.UseSnipeLocationServer)
@@ -102,6 +102,7 @@ namespace PoGo.NecroBot.Logic.Tasks
 
                     await session.Inventory.RefreshCachedInventory();
                     await RecycleItemsTask.Execute(session, cancellationToken);
+
                     if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy ||
                         session.LogicSettings.EvolveAllPokemonAboveIv)
                     {
@@ -118,6 +119,11 @@ namespace PoGo.NecroBot.Logic.Tasks
                     if (session.LogicSettings.RenamePokemon)
                     {
                         await RenamePokemonTask.Execute(session, cancellationToken);
+                    }
+
+                    if (session.LogicSettings.AutoFavoritePokemon)
+                    {
+                        await FavoritePokemonTask.Execute(session, cancellationToken);
                     }
                 }
 
