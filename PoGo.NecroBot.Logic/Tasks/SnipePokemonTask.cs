@@ -289,21 +289,9 @@ namespace PoGo.NecroBot.Logic.Tasks
                 }
                 else if (encounter.Status == EncounterResponse.Types.Status.PokemonInventoryFull)
                 {
-<<<<<<< HEAD
-                    if (session.LogicSettings.EvolveAllPokemonWithEnoughCandy || session.LogicSettings.EvolveAllPokemonAboveIv)
-                    {
-                        await EvolvePokemonTask.Execute(session, cancellationToken);
-                    }
-                    if (session.LogicSettings.TransferDuplicatePokemon)
-                    {
-                        await TransferDuplicatePokemonTask.Execute(session, cancellationToken);
-                    }
-
-                    session.EventDispatcher.Send(new WarnEvent
-=======
                     if (session.LogicSettings.EvolveAllPokemonAboveIv ||
                         session.LogicSettings.EvolveAllPokemonWithEnoughCandy)
->>>>>>> 58930fb5e8a7b22a15f9320c119c5bded7ddc40b
+
                     {
                         await EvolvePokemonTask.Execute(session, cancellationToken);
                     }
