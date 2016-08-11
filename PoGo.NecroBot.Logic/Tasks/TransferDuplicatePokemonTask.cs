@@ -18,6 +18,7 @@ namespace PoGo.NecroBot.Logic.Tasks
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            await session.Inventory.RefreshCachedInventory();
             var duplicatePokemons =
                 await
                     session.Inventory.GetDuplicatePokemonToTransfer(
@@ -31,33 +32,37 @@ namespace PoGo.NecroBot.Logic.Tasks
             var pokemonSettings = await session.Inventory.GetPokemonSettings();
             var pokemonFamilies = await session.Inventory.GetPokemonFamilies();
 
-            foreach (var duplicatePokemon in orderedPokemon)
+            if (duplicatePokemons.Any())
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await session.Client.Inventory.TransferPokemon(duplicatePokemon.Id);
-                await session.Inventory.DeletePokemonFromInvById(duplicatePokemon.Id);
-
-                var bestPokemonOfType = (session.LogicSettings.PrioritizeIvOverCp
-                    ? await session.Inventory.GetHighestPokemonOfTypeByIv(duplicatePokemon)
-                    : await session.Inventory.GetHighestPokemonOfTypeByCp(duplicatePokemon)) ?? duplicatePokemon;
-
-                var setting = pokemonSettings.SingleOrDefault(q => q.PokemonId == duplicatePokemon.PokemonId);
-                var family = pokemonFamilies.FirstOrDefault(q => q.FamilyId == setting.FamilyId);
-
-                family.Candy_++;
-
-                session.EventDispatcher.Send(new TransferPokemonEvent
+                foreach (var duplicatePokemon in orderedPokemon)
                 {
-                    Id = duplicatePokemon.PokemonId,
-                    Perfection = PokemonInfo.CalculatePokemonPerfection(duplicatePokemon),
-                    Cp = duplicatePokemon.Cp,
-                    BestCp = bestPokemonOfType.Cp,
-                    BestPerfection = PokemonInfo.CalculatePokemonPerfection(bestPokemonOfType),
-                    FamilyCandies = family.Candy_
-                });
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 0);
+                    await session.Client.Inventory.TransferPokemon(duplicatePokemon.Id);
+                    await session.Inventory.DeletePokemonFromInvById(duplicatePokemon.Id);
+
+                    var bestPokemonOfType = (session.LogicSettings.PrioritizeIvOverCp
+                        ? await session.Inventory.GetHighestPokemonOfTypeByIv(duplicatePokemon)
+                        : await session.Inventory.GetHighestPokemonOfTypeByCp(duplicatePokemon)) ?? duplicatePokemon;
+
+                    var setting = pokemonSettings.SingleOrDefault(q => q.PokemonId == duplicatePokemon.PokemonId);
+                    var family = pokemonFamilies.FirstOrDefault(q => q.FamilyId == setting.FamilyId);
+
+                    family.Candy_++;
+
+                    session.EventDispatcher.Send(new TransferPokemonEvent
+                    {
+                        Id = duplicatePokemon.PokemonId,
+                        Perfection = PokemonInfo.CalculatePokemonPerfection(duplicatePokemon),
+                        Cp = duplicatePokemon.Cp,
+                        BestCp = bestPokemonOfType.Cp,
+                        BestPerfection = PokemonInfo.CalculatePokemonPerfection(bestPokemonOfType),
+                        FamilyCandies = family.Candy_
+                    });
+
+                    DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 0);
+                }
+                await session.Inventory.RefreshCachedInventory();
             }
         }
     }

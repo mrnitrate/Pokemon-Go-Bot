@@ -20,6 +20,7 @@ namespace PoGo.NecroBot.Logic.Tasks
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            await session.Inventory.RefreshCachedInventory();
             var pokemons = await session.Inventory.GetPokemons();
             var pokemonDatas = pokemons as IList<PokemonData> ?? pokemons.ToList();
             var pokemonsFiltered =
@@ -32,40 +33,43 @@ namespace PoGo.NecroBot.Logic.Tasks
                         .ToList().OrderBy( poke => poke.Cp );
 
             var orderedPokemon = pokemonsFiltered.OrderBy( poke => poke.Cp );
-
-            foreach (var pokemon in orderedPokemon )
+            if (orderedPokemon.Any())
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                if ((pokemon.Cp >= session.LogicSettings.KeepMinCp) ||
-                    (PokemonInfo.CalculatePokemonPerfection(pokemon) >= session.LogicSettings.KeepMinIvPercentage &&
-                     session.LogicSettings.PrioritizeIvOverCp) ||
-                     (PokemonInfo.GetLevel(pokemon) >= session.LogicSettings.KeepMinLvl && session.LogicSettings.UseKeepMinLvl) ||
-                    pokemon.Favorite == 1)
-                    continue;
-
-                await session.Client.Inventory.TransferPokemon(pokemon.Id);
-                await session.Inventory.DeletePokemonFromInvById(pokemon.Id);
-                var bestPokemonOfType = (session.LogicSettings.PrioritizeIvOverCp
-                    ? await session.Inventory.GetHighestPokemonOfTypeByIv(pokemon)
-                    : await session.Inventory.GetHighestPokemonOfTypeByCp(pokemon)) ?? pokemon;
-
-                var setting = session.Inventory.GetPokemonSettings()
-                    .Result.Single(q => q.PokemonId == pokemon.PokemonId);
-                var family = session.Inventory.GetPokemonFamilies().Result.First(q => q.FamilyId == setting.FamilyId);
-
-                family.Candy_++;
-
-                session.EventDispatcher.Send(new TransferPokemonEvent
+                foreach (var pokemon in orderedPokemon)
                 {
-                    Id = pokemon.PokemonId,
-                    Perfection = PokemonInfo.CalculatePokemonPerfection(pokemon),
-                    Cp = pokemon.Cp,
-                    BestCp = bestPokemonOfType.Cp,
-                    BestPerfection = PokemonInfo.CalculatePokemonPerfection(bestPokemonOfType),
-                    FamilyCandies = family.Candy_
-                });
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if ((pokemon.Cp >= session.LogicSettings.KeepMinCp) ||
+                        (PokemonInfo.CalculatePokemonPerfection(pokemon) >= session.LogicSettings.KeepMinIvPercentage &&
+                         session.LogicSettings.PrioritizeIvOverCp) ||
+                         (PokemonInfo.GetLevel(pokemon) >= session.LogicSettings.KeepMinLvl && session.LogicSettings.UseKeepMinLvl) ||
+                        pokemon.Favorite == 1)
+                        continue;
 
-                DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 0);
+                    await session.Client.Inventory.TransferPokemon(pokemon.Id);
+                    await session.Inventory.DeletePokemonFromInvById(pokemon.Id);
+                    var bestPokemonOfType = (session.LogicSettings.PrioritizeIvOverCp
+                        ? await session.Inventory.GetHighestPokemonOfTypeByIv(pokemon)
+                        : await session.Inventory.GetHighestPokemonOfTypeByCp(pokemon)) ?? pokemon;
+
+                    var setting = session.Inventory.GetPokemonSettings()
+                        .Result.Single(q => q.PokemonId == pokemon.PokemonId);
+                    var family = session.Inventory.GetPokemonFamilies().Result.First(q => q.FamilyId == setting.FamilyId);
+
+                    family.Candy_++;
+
+                    session.EventDispatcher.Send(new TransferPokemonEvent
+                    {
+                        Id = pokemon.PokemonId,
+                        Perfection = PokemonInfo.CalculatePokemonPerfection(pokemon),
+                        Cp = pokemon.Cp,
+                        BestCp = bestPokemonOfType.Cp,
+                        BestPerfection = PokemonInfo.CalculatePokemonPerfection(bestPokemonOfType),
+                        FamilyCandies = family.Candy_
+                    });
+
+                    DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 0);
+                }
+                await session.Inventory.RefreshCachedInventory();
             }
         }
     }
